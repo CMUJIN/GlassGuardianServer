@@ -50,7 +50,8 @@ public class NotificationController {
 	    Writer writer = httpResponse.getWriter();
 	    writer.append("OK");
 	    writer.close();
-		
+		//if action type is custom, it will check payload(id), if action is built-in action, only check the type
+	    //if multiple actions share the same built-in action type, cannot distinguished by payload
 	    LOG.info("Got a notification with ID: " + request.getItemId());
 	    // Figure out the impacted user and get their credentials for API calls
 	    String userId = request.getUserToken();
@@ -59,28 +60,26 @@ public class NotificationController {
 	    	LOG.info("authentication failed, user token: "+request.getUserToken());
 	    }
 	    
-	    // TODO null expception here
-	    UserAction action = request.getUserActions().get(0);
-	    if(action.getPayload()!=null){
-	    	LOG.info("user action is "+action.getPayload());
-	    	if(action.getPayload().equals(CustomActionConfigEnum.FETCH.getName())){
-	    		fetchHandler.fetch(request, credential);
-	    	}
-	    	else if(action.getPayload().equals(CustomActionConfigEnum.PUSH.getName())){
-	    		pushHandler.push(request, credential);
-	    	}
-	    	else if(action.getPayload().equals(CustomActionConfigEnum.LIKE.getName())){
-	    		likeHandler.like(request, credential);
-	    	}
-	    	else if(action.getPayload().equals(CustomActionConfigEnum.DISLIKE.getName())){
-	    		dislikeHandler.dislike(request, credential);
-	    	}
-	    }
-	    else{
-	    	LOG.info("user action is "+action.getType());
-	    	if(action.getType().equals(MenuItemActionEnum.SHARE.getValue())){
-	    		pushHandler.push(request, credential);
-	    	}
-	    }
+		// if action type is custom, it will check payload(id), if action is
+		// built-in action, only check the type
+		// if multiple actions share the same built-in action type, cannot
+		// distinguished by payload
+		if (request.getUserActions().contains(
+				new UserAction().setType(MenuItemActionEnum.CUSTOM.getValue())
+						.setPayload(CustomActionConfigEnum.FETCH.getName()))) {
+			fetchHandler.fetch(request, credential);
+		} else if (request.getUserActions().contains(
+				new UserAction().setType(MenuItemActionEnum.REPLY.getValue()))) {
+			pushHandler.push(request, credential);
+		} else if (request.getUserActions().contains(
+				new UserAction().setType(MenuItemActionEnum.CUSTOM.getValue())
+						.setPayload(CustomActionConfigEnum.LIKE.getName()))) {
+			likeHandler.like(request, credential);
+		} else if (request.getUserActions().contains(
+				new UserAction().setType(MenuItemActionEnum.CUSTOM.getValue())
+						.setPayload(CustomActionConfigEnum.DISLIKE.getName()))) {
+			dislikeHandler.dislike(request, credential);
+		}
+
 	}
 }

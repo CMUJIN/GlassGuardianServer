@@ -11,6 +11,7 @@ package com.jinhs.fetch.mirror;
  * NAVIGATE - Navigate to the timeline item's location.
  * TOGGLE_PINNED - Toggle the isPinned state of the timeline item.
  * VIEW_WEBSITE - Open the payload of the menu item in the browser.
+ * No two same built-in actions are allowed
  * */
 public enum MenuItemActionEnum {
 

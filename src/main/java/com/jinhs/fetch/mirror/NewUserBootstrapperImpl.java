@@ -81,11 +81,11 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 
 		// Built in actions
 		List<MenuItem> menuItemList = new ArrayList<MenuItem>();
-		addMenuItem(menuItemList, MenuItemActionEnum.TOGGLE_PINNED);
 		addCustomMenuItem(menuItemList, CustomActionConfigEnum.FETCH);
 		addCustomMenuItem(menuItemList, CustomActionConfigEnum.PUSH);
 		addCustomMenuItem(menuItemList, CustomActionConfigEnum.LIKE);
 		addCustomMenuItem(menuItemList, CustomActionConfigEnum.DISLIKE);
+		addMenuItem(menuItemList, MenuItemActionEnum.TOGGLE_PINNED);
 		TimelineItem timelineItem = mirrorUtil.populateTimeLine(
 				"Welcome to Fetch Pin this timeline", NotificationLevelEnum.Default,
 				menuItemList);

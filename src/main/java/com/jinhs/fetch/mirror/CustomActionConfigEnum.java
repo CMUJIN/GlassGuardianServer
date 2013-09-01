@@ -12,7 +12,7 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getType() {
-			return MenuItemActionEnum.REPLY.getValue();
+			return MenuItemActionEnum.CUSTOM.getValue();
 		}
 
 		public boolean hasPending() {
