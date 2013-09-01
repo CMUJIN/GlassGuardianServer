@@ -12,8 +12,10 @@ import com.google.common.collect.Lists;
 
 @Component
 public class MirrorUtil {
-	public TimelineItem populateTimeLine(String text, NotificationLevelEnum level, List<MenuItem> menuItemList){
+	public TimelineItem populateTimeLine(String text, String isSpeakableText, NotificationLevelEnum level, List<MenuItem> menuItemList){
 		TimelineItem timeLineItem = new TimelineItem();
+		if(isSpeakableText!=null)
+			timeLineItem.setSpeakableText(text);
 		timeLineItem.setText(text);
 		timeLineItem.setNotification(new NotificationConfig().setLevel(level.getValue()));
 		if(menuItemList!=null)
@@ -21,8 +23,16 @@ public class MirrorUtil {
 		return timeLineItem;
 	}
 	
+	public TimelineItem populateTimeLine(String text, String isSpeakableText, NotificationLevelEnum level){
+		return populateTimeLine(text, isSpeakableText, level, null);
+	}
+	
 	public TimelineItem populateTimeLine(String text, NotificationLevelEnum level){
-		return populateTimeLine(text, level, null);
+		return populateTimeLine(text, null, level, null);
+	}
+	
+	public TimelineItem populateTimeLine(String text, NotificationLevelEnum level, List<MenuItem> menuItemList){
+		return populateTimeLine(text, null, level, menuItemList);
 	}
 	
 	public Contact pupulateContact(String contact_id, String contact_name, String imageUrl){
@@ -32,4 +42,5 @@ public class MirrorUtil {
 	    starterProjectContact.setImageUrls(Lists.newArrayList(imageUrl));
 	    return starterProjectContact;
 	}
+	
 }

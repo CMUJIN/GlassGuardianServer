@@ -27,6 +27,7 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.mirror.model.Contact;
 import com.google.api.services.mirror.model.MenuItem;
+import com.google.api.services.mirror.model.MenuValue;
 import com.google.api.services.mirror.model.Subscription;
 import com.google.api.services.mirror.model.TimelineItem;
 
@@ -40,7 +41,7 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 	private static final Logger LOG = Logger
 			.getLogger(NewUserBootstrapperImpl.class.getSimpleName());
 
-	public static final String CONTACT_NAME = "Quick Note Share";
+	public static final String CONTACT_NAME = "FETCH";
 
 	@Autowired
 	AuthUtil authUtil;
@@ -70,7 +71,7 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 			// Subscribe to timeline updates
 			Subscription subscription = mirrorClient.insertSubscription(
 					credential, webUtil.buildNotifyCallBackUrl(), userId,
-					CollectionEnum.LOCATION.getValue());
+					CollectionEnum.TIMELINE.getValue());
 			LOG.info("Bootstrapper inserted subscription "
 					+ subscription.getId() + " for user " + userId);
 		} catch (GoogleJsonResponseException e) {
@@ -81,12 +82,12 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 		// Built in actions
 		List<MenuItem> menuItemList = new ArrayList<MenuItem>();
 		addMenuItem(menuItemList, MenuItemActionEnum.TOGGLE_PINNED);
-		addMenuItem(menuItemList, CustomMenuItemActionEnum.FETCH);
-		addMenuItem(menuItemList, CustomMenuItemActionEnum.PUSH);
-		addMenuItem(menuItemList, CustomMenuItemActionEnum.LIKE);
-		addMenuItem(menuItemList, CustomMenuItemActionEnum.DISLIKE);
+		addCustomMenuItem(menuItemList, CustomActionConfigEnum.FETCH);
+		addCustomMenuItem(menuItemList, CustomActionConfigEnum.PUSH);
+		addCustomMenuItem(menuItemList, CustomActionConfigEnum.LIKE);
+		addCustomMenuItem(menuItemList, CustomActionConfigEnum.DISLIKE);
 		TimelineItem timelineItem = mirrorUtil.populateTimeLine(
-				"Welcome to Fetch/n Pin this timeline", NotificationLevelEnum.Default,
+				"Welcome to Fetch Pin this timeline", NotificationLevelEnum.Default,
 				menuItemList);
 		TimelineItem insertedItem = mirrorClient.insertTimelineItem(credential,
 				timelineItem);
@@ -98,7 +99,37 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 		menuItemList.add(new MenuItem().setAction(action.getValue()));
 	}
 	
-	private void addMenuItem(List<MenuItem> menuItemList, CustomMenuItemActionEnum action) {
-		menuItemList.add(new MenuItem().setAction(MenuItemActionEnum.CUSTOM.getValue()).setId(action.getValue()));
+	private void addCustomMenuItem(List<MenuItem> menuItemList, CustomActionConfigEnum config){
+		MenuItem customItem = new MenuItem();
+		customItem.setAction(config.getType());
+		customItem.setId(config.getName());
+		customItem.setValues(buildMenuValues(config));
+		menuItemList.add(customItem);
+	}
+	
+	private List<MenuValue> buildMenuValues(CustomActionConfigEnum config) {
+		List<MenuValue> menuValues = new ArrayList<MenuValue>();
+		MenuValue defaultValue = new MenuValue();
+		defaultValue.setDisplayName(config.getName());
+		defaultValue.setState("DEFAULT");
+		defaultValue.setIconUrl(config.getIconUrl());
+		menuValues.add(defaultValue);
+
+		if (config.hasPending()) {
+			MenuValue pendingValue = new MenuValue();
+			pendingValue.setDisplayName(config.getPendingName());
+			pendingValue.setState("PENDING");
+			pendingValue.setIconUrl(config.getPendingIconUrl());
+			menuValues.add(defaultValue);
+		}
+
+		if (config.hasComplete()) {
+			MenuValue completeValue = new MenuValue();
+			completeValue.setDisplayName(config.getCompleteName());
+			completeValue.setState("COMPLETE");
+			completeValue.setIconUrl(config.getCompleteIconUrl());
+			menuValues.add(defaultValue);
+		}
+		return menuValues;
 	}
 }

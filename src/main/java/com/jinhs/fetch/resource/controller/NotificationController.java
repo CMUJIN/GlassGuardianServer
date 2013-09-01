@@ -20,7 +20,7 @@ import com.jinhs.fetch.handler.FetchHandler;
 import com.jinhs.fetch.handler.LikeHandler;
 import com.jinhs.fetch.handler.PushHandler;
 import com.jinhs.fetch.mirror.AuthUtil;
-import com.jinhs.fetch.mirror.CustomMenuItemActionEnum;
+import com.jinhs.fetch.mirror.CustomActionConfigEnum;
 import com.jinhs.fetch.mirror.MenuItemActionEnum;
 
 @RequestMapping("/notify")
@@ -58,19 +58,21 @@ public class NotificationController {
 	    if(credential==null){
 	    	LOG.info("authentication failed, user token: "+request.getUserToken());
 	    }
+	    
+	    // TODO null expception here
 	    UserAction action = request.getUserActions().get(0);
 	    if(action.getPayload()!=null){
 	    	LOG.info("user action is "+action.getPayload());
-	    	if(action.getPayload().equals(CustomMenuItemActionEnum.FETCH.getValue())){
+	    	if(action.getPayload().equals(CustomActionConfigEnum.FETCH.getName())){
 	    		fetchHandler.fetch(request, credential);
 	    	}
-	    	else if(action.getPayload().equals(CustomMenuItemActionEnum.PUSH.getValue())){
+	    	else if(action.getPayload().equals(CustomActionConfigEnum.PUSH.getName())){
 	    		pushHandler.push(request, credential);
 	    	}
-	    	else if(action.getPayload().equals(CustomMenuItemActionEnum.LIKE.getValue())){
+	    	else if(action.getPayload().equals(CustomActionConfigEnum.LIKE.getName())){
 	    		likeHandler.like(request, credential);
 	    	}
-	    	else if(action.getPayload().equals(CustomMenuItemActionEnum.DISLIKE.getValue())){
+	    	else if(action.getPayload().equals(CustomActionConfigEnum.DISLIKE.getName())){
 	    		dislikeHandler.dislike(request, credential);
 	    	}
 	    }

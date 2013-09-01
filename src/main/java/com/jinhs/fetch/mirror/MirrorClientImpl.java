@@ -40,7 +40,6 @@ import com.google.api.services.mirror.model.SubscriptionsListResponse;
 import com.google.api.services.mirror.model.TimelineItem;
 import com.google.api.services.mirror.model.TimelineListResponse;
 import com.google.common.io.ByteStreams;
-import com.jinhs.fetch.bo.LocationBo;
 
 /**
  * A facade for easier access to basic API operations
@@ -222,6 +221,9 @@ public class MirrorClientImpl implements MirrorClient {
 
 	@Override
 	public Location getUserLocation(Credential credential) throws IOException {
-		return getMirror(credential).locations().get("latest").execute();
+		Location location = getMirror(credential).locations().get("latest").execute();
+		if(location==null)
+			LOG.info("location is null");
+		return location;
 	}
 }

@@ -21,7 +21,7 @@ import com.jinhs.fetch.mirror.WebUtil;
 @RequestMapping("/auth")
 @Controller
 public class AuthController {
-	 private static final Logger LOG = Logger.getLogger(AuthController.class.getSimpleName());
+	private static final Logger LOG = Logger.getLogger(AuthController.class.getSimpleName());
 	 
 	@Autowired
 	AuthUtil authUtil;
@@ -33,38 +33,40 @@ public class AuthController {
 	NewUserBootstrapper newUserBootstrapper;
 	 
 	@RequestMapping(method=RequestMethod.GET)
-	public String auth(@RequestParam(value="code", required = false) String code, Model uiModel) throws IOException{
+	public String auth(@RequestParam(value = "code", required = false) String code, Model uiModel) throws IOException {
 		// If we have a code, finish the OAuth 2.0 dance
-	    if (code != null) {
-	      LOG.info("Got a code. Attempting to exchange for access token.");
+		if (code != null) {
+			LOG.info("Got a code. Attempting to exchange for access token.");
 
-	      AuthorizationCodeFlow flow = authUtil.newAuthorizationCodeFlow();
-	      TokenResponse tokenResponse = flow.newTokenRequest(code)
-	              .setRedirectUri(webUtil.buildOAuthCallBackUrl()).execute();
+			AuthorizationCodeFlow flow = authUtil.newAuthorizationCodeFlow();
+			TokenResponse tokenResponse = flow.newTokenRequest(code)
+					.setRedirectUri(webUtil.buildOAuthCallBackUrl()).execute();
 
-	      // Extract the Google User ID from the ID token in the auth response
-	      String userId = ((GoogleTokenResponse) tokenResponse).parseIdToken().getPayload().getUserId();
-	      //String userId = "";
-	      LOG.info("Code exchange worked. User " + userId + " logged in.");
+			// Extract the Google User ID from the ID token in the auth response
+			String userId = ((GoogleTokenResponse) tokenResponse)
+					.parseIdToken().getPayload().getUserId();
+			// String userId = "";
+			LOG.info("Code exchange worked. User " + userId + " logged in.");
 
-	      // Set it into the session
-	      //AuthUtil.setUserId(req, userId);
-	      flow.createAndStoreCredential(tokenResponse, userId);
+			// Set it into the session
+			// AuthUtil.setUserId(req, userId);
+			flow.createAndStoreCredential(tokenResponse, userId);
 
-	      // The dance is done. Do our bootstrapping stuff for this user
-	      newUserBootstrapper.bootstrapNewUser(userId);
+			// The dance is done. Do our bootstrapping stuff for this user
+			newUserBootstrapper.bootstrapNewUser(userId);
 
-	      // Redirect back to index
-	      return "authsuccess";
-	    }
+			// Redirect back to index
+			return "authsuccess";
+		}
 
-	    // Else, we have a new flow. Initiate a new flow.
-	    LOG.info("No auth context found. Kicking off a new auth flow.");
+		// Else, we have a new flow. Initiate a new flow.
+		LOG.info("No auth context found. Kicking off a new auth flow.");
 
-	    AuthorizationCodeFlow flow = authUtil.newAuthorizationCodeFlow();
-	    GenericUrl url = flow.newAuthorizationUrl().setRedirectUri(webUtil.buildOAuthCallBackUrl());
-	    url.set("approval_prompt", "force");
-	    return "redirect:"+url.build();
-	  }
+		AuthorizationCodeFlow flow = authUtil.newAuthorizationCodeFlow();
+		GenericUrl url = flow.newAuthorizationUrl().setRedirectUri(
+				webUtil.buildOAuthCallBackUrl());
+		url.set("approval_prompt", "force");
+		return "redirect:" + url.build();
+	}
 	}
 
