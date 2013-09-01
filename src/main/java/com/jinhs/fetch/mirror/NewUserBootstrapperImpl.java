@@ -93,6 +93,7 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 				timelineItem);
 		LOG.info("Bootstrapper inserted welcome message "
 				+ insertedItem.getId() + " for user " + userId);
+		
 	}
 
 	private void addMenuItem(List<MenuItem> menuItemList, MenuItemActionEnum action) {
