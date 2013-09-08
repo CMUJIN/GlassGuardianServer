@@ -9,12 +9,10 @@ import org.springframework.stereotype.Component;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.services.mirror.model.Location;
 import com.google.api.services.mirror.model.Notification;
-import com.google.api.services.mirror.model.TimelineItem;
 import com.jinhs.fetch.bo.NoteBo;
 import com.jinhs.fetch.common.NoteBoHelperImpl;
 import com.jinhs.fetch.mirror.MirrorClient;
 import com.jinhs.fetch.mirror.MirrorUtil;
-import com.jinhs.fetch.mirror.NotificationLevelEnum;
 import com.jinhs.fetch.transaction.DBTransService;
 
 @Component
@@ -35,13 +33,18 @@ public class PushHandlerImpl implements PushHandler {
 	
 	@Override
 	public void push(Notification notification, Credential credential) throws IOException {
+		LOG.info("Push operation");
 		Location location = mirrorClient.getUserLocation(credential);
-		if(location==null)
+		if(location==null){
+			LOG.info("Location load failed");
 			throw new IOException();
+		}
 		NoteBo noteBo = noteBoHelper.populateNoteBo(notification, credential, location);
 		transService.insertNote(noteBo);
-		TimelineItem item = mirrorUtil.populateTimeLine("Push Successfully", NotificationLevelEnum.Default);
-		mirrorClient.insertTimelineItem(credential, item);
+		/*List<MenuItem> actionList = new ArrayList<MenuItem>();
+		actionList.add(new MenuItem().setAction(MenuItemActionEnum.DELETE.getValue()));
+		TimelineItem item = mirrorUtil.populateTimeLine("Push Successfully", actionList);
+		mirrorClient.insertTimelineItem(credential, item);*/
 		LOG.info("push successfully");
 	}
 

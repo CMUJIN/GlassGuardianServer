@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.jinhs.fetch.common.WebUtil;
 
 @Component
 public class MirrorHandlerImpl implements MirrorHandler {
@@ -34,9 +35,6 @@ public class MirrorHandlerImpl implements MirrorHandler {
 	@Autowired
 	MirrorClient mirrorClient;
 	
-	@Autowired
-	WebUtil webUtil;
-	
 	@Override
 	public void insertSubscription(String userId, String collection) throws IOException {
 
@@ -44,10 +42,10 @@ public class MirrorHandlerImpl implements MirrorHandler {
 		// subscribe (only works deployed to production)
 		try {
 			mirrorClient.insertSubscription(credential,
-					webUtil.buildSubscribeCallBackUrl(), userId, collection);
+					WebUtil.buildSubscribeCallBackUrl(), userId, collection);
 		} catch (GoogleJsonResponseException e) {
 			LOG.warn("Could not subscribe "
-					+ webUtil.buildSubscribeCallBackUrl() + " because "
+					+ WebUtil.buildSubscribeCallBackUrl() + " because "
 					+ e.getDetails().toPrettyString());
 			throw new IOException();
 		}

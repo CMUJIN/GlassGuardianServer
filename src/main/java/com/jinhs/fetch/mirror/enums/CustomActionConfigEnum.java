@@ -1,10 +1,48 @@
-package com.jinhs.fetch.mirror;
+package com.jinhs.fetch.mirror.enums;
 
 public enum CustomActionConfigEnum {
 
 	FETCH {
 		public String getName() {
 			return "FETCH";
+		}
+
+		public String getIconUrl() {
+			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
+		}
+
+		public String getType() {
+			return MenuItemActionEnum.CUSTOM.getValue();
+		}
+
+		public boolean hasPending() {
+			return false;
+		}
+
+		public boolean hasComplete() {
+			return false;
+		}
+
+		public String getPendingName() {
+			return "Pending";
+		}
+
+		public String getCompleteName() {
+			return "Complete";
+		}
+
+		public String getPendingIconUrl() {
+			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
+		}
+
+		public String getCompleteIconUrl() {
+			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
+		}
+	},
+	
+	FETCH_MORE {
+		public String getName() {
+			return "FETCH MORE";
 		}
 
 		public String getIconUrl() {

@@ -1,4 +1,4 @@
-package com.jinhs.fetch.mirror;
+package com.jinhs.fetch.mirror.enums;
 /*
  * CUSTOM - Custom action set by the service. When the user selects this menuItem, the API triggers a notification to your callbackUrl with the userActions.type set to CUSTOM and the userActions.payload set to the ID of this menu item. This is the default value.
  * Built-in actions:

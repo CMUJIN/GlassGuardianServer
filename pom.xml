@@ -177,7 +177,7 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.1.2</version>
 		</dependency>
-		
+
 
 		<!-- JPA 2.0 for GAE -->
 		<dependency>
@@ -237,7 +237,6 @@
 			<version>1.14.1-beta</version>
 		</dependency>
 
-
 		<!-- Google Glass API library -->
 		<dependency>
 			<groupId>com.google.apis</groupId>
@@ -267,6 +266,12 @@
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.7</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty</artifactId>
+			<version>6.1.9</version>
 		</dependency>
 
 		<!-- log4j -->

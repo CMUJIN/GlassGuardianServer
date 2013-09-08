@@ -40,6 +40,7 @@ import com.google.api.services.mirror.model.SubscriptionsListResponse;
 import com.google.api.services.mirror.model.TimelineItem;
 import com.google.api.services.mirror.model.TimelineListResponse;
 import com.google.common.io.ByteStreams;
+import com.jinhs.fetch.mirror.enums.OperationsEnum;
 
 /**
  * A facade for easier access to basic API operations

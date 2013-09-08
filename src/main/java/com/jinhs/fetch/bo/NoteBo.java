@@ -28,6 +28,10 @@ public class NoteBo {
 	private String address;
 	
 	private String zip_code;
+	
+	private String timeline_id;
+	
+	private String attachment_id;
 
 	public String getUser_id() {
 		return user_id;
@@ -123,5 +127,21 @@ public class NoteBo {
 
 	public void setZip_code(String zip_code) {
 		this.zip_code = zip_code;
+	}
+
+	public String getTimeline_id() {
+		return timeline_id;
+	}
+
+	public void setTimeline_id(String timeline_id) {
+		this.timeline_id = timeline_id;
+	}
+
+	public String getAttachment_id() {
+		return attachment_id;
+	}
+
+	public void setAttachment_id(String attachment_id) {
+		this.attachment_id = attachment_id;
 	}
 }

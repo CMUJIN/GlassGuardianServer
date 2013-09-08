@@ -30,6 +30,10 @@ import com.google.api.services.mirror.model.MenuItem;
 import com.google.api.services.mirror.model.MenuValue;
 import com.google.api.services.mirror.model.Subscription;
 import com.google.api.services.mirror.model.TimelineItem;
+import com.jinhs.fetch.common.WebUtil;
+import com.jinhs.fetch.mirror.enums.CollectionEnum;
+import com.jinhs.fetch.mirror.enums.CustomActionConfigEnum;
+import com.jinhs.fetch.mirror.enums.MenuItemActionEnum;
 
 /**
  * Utility functions used when users first authenticate with this service
@@ -47,9 +51,6 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 	AuthUtil authUtil;
 
 	@Autowired
-	WebUtil webUtil;
-
-	@Autowired
 	MirrorClient mirrorClient;
 
 	@Autowired
@@ -61,7 +62,7 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 
 		// Create contact
 		Contact starterProjectContact = mirrorUtil.pupulateContact(
-				CONTACT_NAME, CONTACT_NAME, webUtil.buildContactImageUrl());
+				CONTACT_NAME, CONTACT_NAME, WebUtil.buildContactImageUrl());
 		Contact insertedContact = mirrorClient.insertContact(credential,
 				starterProjectContact);
 		LOG.info("Bootstrapper inserted contact " + insertedContact.getId()
@@ -70,7 +71,7 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 		try {
 			// Subscribe to timeline updates
 			Subscription subscription = mirrorClient.insertSubscription(
-					credential, webUtil.buildNotifyCallBackUrl(), userId,
+					credential, WebUtil.buildNotifyCallBackUrl(), userId,
 					CollectionEnum.TIMELINE.getValue());
 			LOG.info("Bootstrapper inserted subscription "
 					+ subscription.getId() + " for user " + userId);
@@ -81,56 +82,16 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 
 		// Built in actions
 		List<MenuItem> menuItemList = new ArrayList<MenuItem>();
-		addCustomMenuItem(menuItemList, CustomActionConfigEnum.FETCH);
-		addCustomMenuItem(menuItemList, CustomActionConfigEnum.PUSH);
-		addCustomMenuItem(menuItemList, CustomActionConfigEnum.LIKE);
-		addCustomMenuItem(menuItemList, CustomActionConfigEnum.DISLIKE);
-		addMenuItem(menuItemList, MenuItemActionEnum.TOGGLE_PINNED);
+		TimelinePopulateHelper.addCustomMenuItem(menuItemList, CustomActionConfigEnum.FETCH);
+		TimelinePopulateHelper.addCustomMenuItem(menuItemList, CustomActionConfigEnum.PUSH);
+		TimelinePopulateHelper.addCustomMenuItem(menuItemList, CustomActionConfigEnum.LIKE);
+		TimelinePopulateHelper.addCustomMenuItem(menuItemList, CustomActionConfigEnum.DISLIKE);
+		TimelinePopulateHelper.addMenuItem(menuItemList, MenuItemActionEnum.TOGGLE_PINNED);
 		TimelineItem timelineItem = mirrorUtil.populateTimeLine(
-				"Welcome to Fetch Pin this timeline", NotificationLevelEnum.Default,
-				menuItemList);
+				"Welcome to Fetch Pin this timeline", menuItemList);
 		TimelineItem insertedItem = mirrorClient.insertTimelineItem(credential,
 				timelineItem);
 		LOG.info("Bootstrapper inserted welcome message "
 				+ insertedItem.getId() + " for user " + userId);
-		
-	}
-
-	private void addMenuItem(List<MenuItem> menuItemList, MenuItemActionEnum action) {
-		menuItemList.add(new MenuItem().setAction(action.getValue()));
-	}
-	
-	private void addCustomMenuItem(List<MenuItem> menuItemList, CustomActionConfigEnum config){
-		MenuItem customItem = new MenuItem();
-		customItem.setAction(config.getType());
-		customItem.setId(config.getName());
-		customItem.setValues(buildMenuValues(config));
-		menuItemList.add(customItem);
-	}
-	
-	private List<MenuValue> buildMenuValues(CustomActionConfigEnum config) {
-		List<MenuValue> menuValues = new ArrayList<MenuValue>();
-		MenuValue defaultValue = new MenuValue();
-		defaultValue.setDisplayName(config.getName());
-		defaultValue.setState("DEFAULT");
-		defaultValue.setIconUrl(config.getIconUrl());
-		menuValues.add(defaultValue);
-
-		if (config.hasPending()) {
-			MenuValue pendingValue = new MenuValue();
-			pendingValue.setDisplayName(config.getPendingName());
-			pendingValue.setState("PENDING");
-			pendingValue.setIconUrl(config.getPendingIconUrl());
-			menuValues.add(defaultValue);
-		}
-
-		if (config.hasComplete()) {
-			MenuValue completeValue = new MenuValue();
-			completeValue.setDisplayName(config.getCompleteName());
-			completeValue.setState("COMPLETE");
-			completeValue.setIconUrl(config.getCompleteIconUrl());
-			menuValues.add(defaultValue);
-		}
-		return menuValues;
 	}
 }

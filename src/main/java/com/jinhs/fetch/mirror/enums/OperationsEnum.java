@@ -1,4 +1,4 @@
-package com.jinhs.fetch.mirror;
+package com.jinhs.fetch.mirror.enums;
 
 public enum OperationsEnum {
 	UPDATE{

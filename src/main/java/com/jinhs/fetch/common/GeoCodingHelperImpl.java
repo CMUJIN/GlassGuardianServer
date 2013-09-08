@@ -4,36 +4,32 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 
 @Component
 public class GeoCodingHelperImpl implements GeoCodingHelper {
-
+	private static final Logger LOG = Logger.getLogger(GeoCodingHelperImpl.class.getSimpleName());
+	
 	@Override
-	public String getZipCode(long latitude, long longtitude) throws IOException {
-		String url = generateUrl(latitude, longtitude);
-		
-		HttpClient client = new DefaultHttpClient();
-        HttpGet request = new HttpGet(url);
-        HttpResponse response = client.execute(request);
-        InputStream content = response.getEntity().getContent();
-        LocationResult data = new Gson().fromJson(getStringFromInputStream(content), LocationResult.class);
-        return getCode(data);
+	public String getZipCode(double latitude, double longtitude) throws IOException {
+		URL url = generateUrl(latitude, longtitude);
+		LOG.info("geolocation url:"+url.toString());
+        LocationResult data = new Gson().fromJson(getStringFromInputStream(url.openStream()), LocationResult.class);
+        String zipCode = getCode(data);
+        return zipCode;
 	}
-
 	private String getCode(LocationResult data) {
 		for(ResultData result:data.getResults()){
         	for(AddressComponent address: result.getAddress_components()){
         		for(String type:address.getTypes()){
         			if(type.equals("postal_code")){
+        				LOG.info("zipcode:"+address.getLong_name());
         				return address.getLong_name();
         			}
         		}
@@ -42,14 +38,15 @@ public class GeoCodingHelperImpl implements GeoCodingHelper {
 		return null;
 	}
 
-	private String generateUrl(long latitude, long longtitude) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("http://maps.googleapis.com/maps/api/geocode/json?latlng=");
-		sb.append(latitude);
-		sb.append(",");
-		sb.append(longtitude);
-		sb.append("&sensor=false");
-		return sb.toString();
+	private URL generateUrl(double latitude, double longtitude) {
+		try {
+			URL url = new URL("http://maps.googleapis.com/maps/api/geocode/json?latlng="+latitude+","+longtitude+"&sensor=false");
+			return url;
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	// convert InputStream to String
@@ -78,50 +75,4 @@ public class GeoCodingHelperImpl implements GeoCodingHelper {
 		return sb.toString();
 	}
 	
-	class LocationResult{
-		private List<ResultData> results;
-
-		public List<ResultData> getResults() {
-			return results;
-		}
-
-		public void setResults(List<ResultData> results) {
-			this.results = results;
-		}
-	}
-	class ResultData{
-		private List<AddressComponent> address_components;
-
-		public List<AddressComponent> getAddress_components() {
-			return address_components;
-		}
-
-		public void setAddress_components(List<AddressComponent> address_components) {
-			this.address_components = address_components;
-		}
-	}
-	class AddressComponent{
-		private String long_name;
-		private String short_name;
-		private List<String> types;
-		public String getLong_name() {
-			return long_name;
-		}
-		public void setLong_name(String long_name) {
-			this.long_name = long_name;
-		}
-		public String getShort_name() {
-			return short_name;
-		}
-		public void setShort_name(String short_name) {
-			this.short_name = short_name;
-		}
-		public List<String> getTypes() {
-			return types;
-		}
-		public void setTypes(List<String>types) {
-			this.types = types;
-		}
-	}
-
 }

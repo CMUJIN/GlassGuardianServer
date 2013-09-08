@@ -55,6 +55,12 @@ public class NoteEntity {
 	
 	@Column(name="ZIP_CODE")
 	private String zip_code;
+	
+	@Column(name="TIMELINE_ID")
+	private String timeline_id;
+	
+	@Column(name="ATTACHMENT_ID")
+	private String attachment_id;
 
 	public Key getKey() {
 		return key;
@@ -158,5 +164,21 @@ public class NoteEntity {
 
 	public void setZip_code(String zip_code) {
 		this.zip_code = zip_code;
+	}
+
+	public String getTimeline_id() {
+		return timeline_id;
+	}
+
+	public void setTimeline_id(String timeline_id) {
+		this.timeline_id = timeline_id;
+	}
+
+	public String getAttachment_id() {
+		return attachment_id;
+	}
+
+	public void setAttachment_id(String attachment_id) {
+		this.attachment_id = attachment_id;
 	}
 }

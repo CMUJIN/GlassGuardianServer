@@ -14,9 +14,9 @@ import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.GenericUrl;
+import com.jinhs.fetch.common.WebUtil;
 import com.jinhs.fetch.mirror.AuthUtil;
 import com.jinhs.fetch.mirror.NewUserBootstrapper;
-import com.jinhs.fetch.mirror.WebUtil;
 
 @RequestMapping("/auth")
 @Controller
@@ -25,9 +25,6 @@ public class AuthController {
 	 
 	@Autowired
 	AuthUtil authUtil;
-	
-	@Autowired
-	WebUtil webUtil;
 	
 	@Autowired
 	NewUserBootstrapper newUserBootstrapper;
@@ -40,7 +37,7 @@ public class AuthController {
 
 			AuthorizationCodeFlow flow = authUtil.newAuthorizationCodeFlow();
 			TokenResponse tokenResponse = flow.newTokenRequest(code)
-					.setRedirectUri(webUtil.buildOAuthCallBackUrl()).execute();
+					.setRedirectUri(WebUtil.buildOAuthCallBackUrl()).execute();
 
 			// Extract the Google User ID from the ID token in the auth response
 			String userId = ((GoogleTokenResponse) tokenResponse)
@@ -64,7 +61,7 @@ public class AuthController {
 
 		AuthorizationCodeFlow flow = authUtil.newAuthorizationCodeFlow();
 		GenericUrl url = flow.newAuthorizationUrl().setRedirectUri(
-				webUtil.buildOAuthCallBackUrl());
+				WebUtil.buildOAuthCallBackUrl());
 		url.set("approval_prompt", "force");
 		return "redirect:" + url.build();
 	}

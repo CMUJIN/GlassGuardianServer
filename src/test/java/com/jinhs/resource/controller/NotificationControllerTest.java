@@ -11,8 +11,8 @@ import com.google.api.services.mirror.model.MenuItem;
 import com.google.api.services.mirror.model.MenuValue;
 import com.google.api.services.mirror.model.Notification;
 import com.google.api.services.mirror.model.UserAction;
-import com.jinhs.fetch.mirror.CustomActionConfigEnum;
-import com.jinhs.fetch.mirror.MenuItemActionEnum;
+import com.jinhs.fetch.mirror.enums.CustomActionConfigEnum;
+import com.jinhs.fetch.mirror.enums.MenuItemActionEnum;
 import com.jinhs.fetch.resource.controller.NotificationController;
 
 public class NotificationControllerTest {/*

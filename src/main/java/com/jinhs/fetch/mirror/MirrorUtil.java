@@ -9,30 +9,31 @@ import com.google.api.services.mirror.model.MenuItem;
 import com.google.api.services.mirror.model.NotificationConfig;
 import com.google.api.services.mirror.model.TimelineItem;
 import com.google.common.collect.Lists;
+import com.jinhs.fetch.mirror.enums.NotificationLevelEnum;
 
 @Component
 public class MirrorUtil {
-	public TimelineItem populateTimeLine(String text, String isSpeakableText, NotificationLevelEnum level, List<MenuItem> menuItemList){
+	public TimelineItem populateTimeLine(String text, String isSpeakableText, List<MenuItem> menuItemList){
 		TimelineItem timeLineItem = new TimelineItem();
 		if(isSpeakableText!=null)
 			timeLineItem.setSpeakableText(text);
 		timeLineItem.setText(text);
-		timeLineItem.setNotification(new NotificationConfig().setLevel(level.getValue()));
+		timeLineItem.setNotification(new NotificationConfig().setLevel(NotificationLevelEnum.Default.getValue()));
 		if(menuItemList!=null)
 			timeLineItem.setMenuItems(menuItemList);
 		return timeLineItem;
 	}
 	
-	public TimelineItem populateTimeLine(String text, String isSpeakableText, NotificationLevelEnum level){
-		return populateTimeLine(text, isSpeakableText, level, null);
+	public TimelineItem populateTimeLine(String text, String isSpeakableText){
+		return populateTimeLine(text, isSpeakableText, null);
 	}
 	
-	public TimelineItem populateTimeLine(String text, NotificationLevelEnum level){
-		return populateTimeLine(text, null, level, null);
+	public TimelineItem populateTimeLine(String text){
+		return populateTimeLine(text, null, null);
 	}
 	
-	public TimelineItem populateTimeLine(String text, NotificationLevelEnum level, List<MenuItem> menuItemList){
-		return populateTimeLine(text, null, level, menuItemList);
+	public TimelineItem populateTimeLine(String text, List<MenuItem> menuItemList){
+		return populateTimeLine(text, null, menuItemList);
 	}
 	
 	public Contact pupulateContact(String contact_id, String contact_name, String imageUrl){
