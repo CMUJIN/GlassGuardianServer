@@ -2,6 +2,11 @@ package com.jinhs.fetch.resource.controller;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.ListIterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -61,11 +66,24 @@ public class WorkingController {
 		writer.close();
 		
 		Notification request = new Gson().fromJson(payload, Notification.class);
+		Iterator<?> actionMapItr = request.getUserActions().iterator();
+		
+		LinkedHashMap<String, String> actionInfoMap = null;
+		String actionType = "UNKNOWN";
+		String actionPayload = "UNKNOWN";
+		if(actionMapItr.hasNext()){
+			actionInfoMap = (LinkedHashMap)actionMapItr.next();
+			actionType = actionInfoMap.get("type");
+			actionType = actionInfoMap.get("value");
+		}
+		else{
+			return;
+		}
 		// if action type is custom, it will check payload(id), if action is
 		// built-in action, only check the type
 		// if multiple actions share the same built-in action type, cannot
 		// distinguished by payload
-		LOG.info("Got a notification with ID: ");
+		LOG.info("Got a notification with ID:"+request.getItemId());
 		// Figure out the impacted user and get their credentials for API calls
 		String userId = request.getUserToken();
 		Credential credential = authUtil.getCredential(userId);
@@ -78,7 +96,44 @@ public class WorkingController {
 		// built-in action, only check the type
 		// if multiple actions share the same built-in action type, cannot
 		// distinguished by payload
-		if (request.getUserActions().contains(
+		if(actionType.equals(MenuItemActionEnum.REPLY.getValue())){
+			pushHandler.push(request, credential);
+			return;
+		}
+		else if(actionType.equals(MenuItemActionEnum.SHARE.getValue())){
+			pushHandler.push(request, credential);
+			return;
+		}
+		else if(actionType.equals(MenuItemActionEnum.CUSTOM.getValue())){
+			if(actionPayload.equals(CustomActionConfigEnum.FETCH.getName())){
+				fetchHandler.fetch(request, credential);
+				return;
+			}
+			else if(actionPayload.equals(CustomActionConfigEnum.LIKE.getName())){
+				likeHandler.like(request, credential);
+				return;
+			}
+			else if(actionPayload.equals(CustomActionConfigEnum.DISLIKE.getName())){
+				dislikeHandler.dislike(request, credential);
+				return;
+			}
+
+			if(actionPayload.startsWith(CustomActionConfigEnum.FETCH_MORE.getName())){
+				Pattern patternGroupId = Pattern.compile("&G([^<]+?)&H");
+				Pattern patternIndex = Pattern.compile("&ID([^<]+?)END");
+				Matcher matcher = patternGroupId.matcher(actionPayload);
+				matcher.find();
+				String groupId = matcher.group(1);
+				
+			    matcher = patternIndex.matcher(actionPayload);
+			    matcher.find();
+				String index = matcher.group(1);
+				// FETCH MORE
+			}
+		}
+		
+		
+		/*if (request.getUserActions().contains(
 				new UserAction().setType(MenuItemActionEnum.CUSTOM.getValue())
 						.setPayload(CustomActionConfigEnum.FETCH.getName()))) {
 			fetchHandler.fetch(request, credential);
@@ -100,8 +155,11 @@ public class WorkingController {
 		} else if (request.getUserActions().contains(
 				new UserAction().setType(MenuItemActionEnum.DELETE.getValue()))) {
 			deleteHandler.delete(request, credential);
-		}else{//SHARE
+		} else if (request.getUserActions().contains(
+				new UserAction().setType(MenuItemActionEnum.TOGGLE_PINNED.getValue()))) {
+			// PIN action
+		} else{//SHARE
 			pushHandler.push(request, credential);
-		}
+		}*/
 	}
 }

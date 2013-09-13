@@ -13,35 +13,47 @@ import com.jinhs.fetch.mirror.enums.NotificationLevelEnum;
 
 @Component
 public class MirrorUtil {
-	public TimelineItem populateTimeLine(String text, String isSpeakableText, List<MenuItem> menuItemList){
+	public TimelineItem populateTimeLine(String text, String isSpeakableText,
+			List<MenuItem> menuItemList, boolean isHtml) {
 		TimelineItem timeLineItem = new TimelineItem();
-		if(isSpeakableText!=null)
+		if (isSpeakableText != null)
 			timeLineItem.setSpeakableText(text);
-		timeLineItem.setText(text);
-		timeLineItem.setNotification(new NotificationConfig().setLevel(NotificationLevelEnum.Default.getValue()));
-		if(menuItemList!=null)
+		if (isHtml)
+			timeLineItem.setHtml(text);
+		else
+			timeLineItem.setText(text);
+		timeLineItem.setNotification(new NotificationConfig()
+				.setLevel(NotificationLevelEnum.Default.getValue()));
+		if (menuItemList != null)
 			timeLineItem.setMenuItems(menuItemList);
 		return timeLineItem;
 	}
-	
-	public TimelineItem populateTimeLine(String text, String isSpeakableText){
-		return populateTimeLine(text, isSpeakableText, null);
+
+	public TimelineItem populateTimeLine(String text, String isSpeakableText) {
+		return populateTimeLine(text, isSpeakableText, null, false);
 	}
-	
-	public TimelineItem populateTimeLine(String text){
-		return populateTimeLine(text, null, null);
+
+	public TimelineItem populateTimeLine(String text) {
+		return populateTimeLine(text, null, null, false);
 	}
-	
-	public TimelineItem populateTimeLine(String text, List<MenuItem> menuItemList){
-		return populateTimeLine(text, null, menuItemList);
+
+	public TimelineItem populateTimeLine(String text,
+			List<MenuItem> menuItemList) {
+		return populateTimeLine(text, null, menuItemList, false);
 	}
-	
-	public Contact pupulateContact(String contact_id, String contact_name, String imageUrl){
+
+	public TimelineItem populateTimeLineWithHtml(String html,
+			List<MenuItem> menuItemList) {
+		return populateTimeLine(html, null, menuItemList, true);
+	}
+
+	public Contact pupulateContact(String contact_id, String contact_name,
+			String imageUrl) {
 		Contact starterProjectContact = new Contact();
 		starterProjectContact.setId(contact_id);
-	    starterProjectContact.setDisplayName(contact_name);
-	    starterProjectContact.setImageUrls(Lists.newArrayList(imageUrl));
-	    return starterProjectContact;
+		starterProjectContact.setDisplayName(contact_name);
+		starterProjectContact.setImageUrls(Lists.newArrayList(imageUrl));
+		return starterProjectContact;
 	}
-	
+
 }

@@ -25,10 +25,11 @@ public class DataProcessHelperImpl implements DataProcessHelper {
 	}
 
 	@Override
-	public int populateValuation(List<NoteBo> list) {
+	public int populateValuation(List<NoteBo> listByCoordinate, List<NoteBo> listByAddress, List<NoteBo> listByZip) {
 		int count = 0;
 		int sum = 0;
-		for (NoteBo note : list) {
+		
+		for (NoteBo note : listByCoordinate) {
 			if (note.getValuation() == 0) {
 				continue;
 			} else {
@@ -39,7 +40,76 @@ public class DataProcessHelperImpl implements DataProcessHelper {
 		}
 		if(sum==0)
 			return 0;
-		LOG.info("count:" + count + " size:" + list.size());
+		LOG.info("count:" + count + " size:" + listByCoordinate.size());
+		return (count * 100) / sum;
+	}
+
+	@Override
+	public int populateValutionByCoordinate(List<NoteBo> listByCoordinate) {
+		if(listByCoordinate==null)
+			return -1;
+		
+		int count = 0;
+		int sum = 0;
+		
+		for (NoteBo note : listByCoordinate) {
+			if (note.getValuation() == 0) {
+				continue;
+			} else {
+				sum++;
+				if (note.getValuation() > 0)
+					count++;
+			}
+		}
+		if(sum==0)
+			return -1;
+		LOG.info("count:" + count + " size:" + listByCoordinate.size());
+		return (count * 100) / sum;
+	}
+
+	@Override
+	public int populateValutionByAddress(List<NoteBo> listByAddress) {
+		if(listByAddress==null)
+			return -1;
+		
+		int count = 0;
+		int sum = 0;
+		
+		for (NoteBo note : listByAddress) {
+			if (note.getValuation() == 0) {
+				continue;
+			} else {
+				sum++;
+				if (note.getValuation() > 0)
+					count++;
+			}
+		}
+		if(sum==0)
+			return -1;
+		LOG.info("count:" + count + " size:" + listByAddress.size());
+		return (count * 100) / sum;
+	}
+
+	@Override
+	public int populateValutionByZip(List<NoteBo> listByZip) {
+		if(listByZip==null)
+			return -1;
+		
+		int count = 0;
+		int sum = 0;
+		
+		for (NoteBo note : listByZip) {
+			if (note.getValuation() == 0) {
+				continue;
+			} else {
+				sum++;
+				if (note.getValuation() > 0)
+					count++;
+			}
+		}
+		if(sum==0)
+			return -1;
+		LOG.info("count:" + count + " size:" + listByZip.size());
 		return (count * 100) / sum;
 	}
 

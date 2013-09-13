@@ -52,7 +52,7 @@ public class NoteBoHelperImpl implements NoteBoHelper {
 		TimelineItem timelineItem = mirror.timeline().get(notification.getItemId()) .execute();
 		if(hasContent)
 			noteBo.setText_note(timelineItem.getText());
-		if(hasContent&&timelineItem.getAttachments() != null && timelineItem.getAttachments().size() > 0){
+		/*if(hasContent&&timelineItem.getAttachments() != null && timelineItem.getAttachments().size() > 0){
 			// Get the first attachment
 			String attachmentId = timelineItem.getAttachments().get(0).getId();
 			// Get the attachment content
@@ -68,7 +68,7 @@ public class NoteBoHelperImpl implements NoteBoHelper {
 
 			buffer.flush();
 			noteBo.setImage_note(buffer.toByteArray());
-		}
+		}*/
 		
 		noteBo.setTimeline_id(timelineItem.getId());
 		if(timelineItem.getAttachments()!=null)

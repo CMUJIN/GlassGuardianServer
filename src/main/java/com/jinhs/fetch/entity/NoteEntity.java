@@ -53,6 +53,9 @@ public class NoteEntity {
 	@Column(name="ADDRESS")
 	private String address;
 	
+	@Column(name="LOCATION_ID")
+	private String location_id;
+	
 	@Column(name="ZIP_CODE")
 	private String zip_code;
 	
@@ -180,5 +183,13 @@ public class NoteEntity {
 
 	public void setAttachment_id(String attachment_id) {
 		this.attachment_id = attachment_id;
+	}
+
+	public String getLocation_id() {
+		return location_id;
+	}
+
+	public void setLocation_id(String location_id) {
+		this.location_id = location_id;
 	}
 }

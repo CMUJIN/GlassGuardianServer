@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.http.InputStreamContent;
 import com.google.api.services.mirror.model.Location;
 import com.google.api.services.mirror.model.MenuItem;
 import com.google.api.services.mirror.model.Notification;
@@ -52,24 +51,66 @@ public class FetchHandlerImpl implements FetchHandler {
 			throw new IOException();
 		}
 		
+		List<NoteBo> noteListByCoordinate = null;
+		List<NoteBo> noteListByAddress = null;
+		List<NoteBo> noteListByZip = null;
+		
+		noteListByCoordinate = transService.fetchNotesByCoordinate(notification.getUserToken(), location.getLatitude(), location.getLongitude());
+		
+		if(location.getAddress()!=null)
+			noteListByAddress = transService.fetchNotesByAddress(notification.getUserToken(), location.getAddress());
+		
 		String zipCode = geoCodingHelper.getZipCode(location.getLatitude().doubleValue(), location.getLongitude().doubleValue());
-		List<NoteBo> noteList =  transService.fetchNotes(notification.getUserToken(), zipCode);
-		String text = dataProcessHelper.populateTextReviews(noteList);
-		String valuation = dataProcessHelper.populateValuation(noteList)+"% People Like";
+		if(zipCode!=null)
+			noteListByZip =  transService.fetchNotesByZip(notification.getUserToken(), zipCode);
+		
+		// TODO implement note cache
+		
+		
+		String valuationHtml = populateRateHTML(noteListByCoordinate,
+				noteListByAddress, noteListByZip);
 		
 		List<MenuItem> actionList = new ArrayList<MenuItem>();
 		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
 		TimelinePopulateHelper.addCustomMenuItem(actionList, CustomActionConfigEnum.FETCH_MORE);
-		//InputStreamContent mediaContent = new InputStreamContent("image/jpeg", attachment);
-		TimelineItem item = mirrorUtil.populateTimeLine(valuation, actionList);
+		TimelineItem item = mirrorUtil.populateTimeLineWithHtml(valuationHtml, actionList);
 		item.setBundleId("testbundleid");
 		item.setIsBundleCover(true);
 		mirrorClient.insertTimelineItem(credential, item);
 		
-		for(TimelineItem timelineItem: TimelinePopulateHelper.populateBundleNotes(noteList, mirrorClient.getMirror(credential))){
+		for(TimelineItem timelineItem: TimelinePopulateHelper.populateBundleNotes(noteListByCoordinate, mirrorClient.getMirror(credential))){
+			timelineItem.setMenuItems(actionList);
 			mirrorClient.insertTimelineItem(credential, timelineItem);
 		}
 		LOG.info("fetch successfully, zipCode:"+zipCode);
+	}
+
+	private String populateRateHTML(List<NoteBo> noteListByCoordinate,
+			List<NoteBo> noteListByAddress, List<NoteBo> noteListByZip) {
+		int rateByCoordinate = dataProcessHelper.populateValutionByCoordinate(noteListByCoordinate);
+		int rateByAddress = dataProcessHelper.populateValutionByAddress(noteListByAddress);
+		int rateByZip = dataProcessHelper.populateValutionByZip(noteListByZip);
+		StringBuffer sb = new StringBuffer();
+		sb.append("<article class=\"auto-paginate\">");
+		sb.append("<ul>");
+		if(rateByCoordinate>=0){
+			sb.append("<li>");
+			sb.append(rateByCoordinate+"% People Like This Point");
+			sb.append("</li>");
+		}
+		if(rateByAddress>=0){
+			sb.append("<li>");
+			sb.append("rateByAddress+% People Like This Point");
+			sb.append("</li>");
+		}
+		if(rateByZip>=0){
+			sb.append("<li>");
+			sb.append(rateByAddress+"% People Like This Point");
+			sb.append("</li>");
+		}
+		sb.append("</ul>");
+		sb.append("</article>");
+		return sb.toString();
 	}
 
 }

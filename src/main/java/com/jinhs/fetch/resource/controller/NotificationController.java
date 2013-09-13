@@ -2,6 +2,9 @@ package com.jinhs.fetch.resource.controller;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.ListIterator;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,7 +38,21 @@ public class NotificationController {
 		
 		// Respond with OK and status 200 in a timely fashion to prevent
 		// redelivery
-		LOG.info("Receive Notification");
+		ListIterator<?> list = request.getUserActions().listIterator();
+		Iterator<?> list2 = request.getUserActions().iterator();
+		
+		ListIterator<?> list3 = request.getUserActions().listIterator(0);
+		LinkedHashMap<String, String> map = (LinkedHashMap)list2.next();
+		
+		Iterator itr1 = map.keySet().iterator();
+		Iterator itr2 = map.values().iterator();
+		LOG.info("list2 size:"+map.get("type"));
+		while(itr1.hasNext())
+			LOG.info("key"+itr1.next());//return keytype
+		while(itr2.hasNext())
+			LOG.info("value"+itr2.next());//return 
+		String n3 = list3.next().getClass().getSimpleName();
+		LOG.info("Receive Notification"+list.next().getClass()+"&"+"&"+n3);
 		httpResponse.setContentType("text/html");
 		Writer writer = httpResponse.getWriter();
 		writer.append("OK");

@@ -27,6 +27,8 @@ public class NoteBo {
 	
 	private String address;
 	
+	private String location_id;
+	
 	private String zip_code;
 	
 	private String timeline_id;
@@ -143,5 +145,13 @@ public class NoteBo {
 
 	public void setAttachment_id(String attachment_id) {
 		this.attachment_id = attachment_id;
+	}
+
+	public String getLocation_id() {
+		return location_id;
+	}
+
+	public void setLocation_id(String location_id) {
+		this.location_id = location_id;
 	}
 }
