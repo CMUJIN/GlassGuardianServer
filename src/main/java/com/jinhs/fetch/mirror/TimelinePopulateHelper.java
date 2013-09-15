@@ -9,13 +9,14 @@ import com.google.api.services.mirror.model.MenuItem;
 import com.google.api.services.mirror.model.MenuValue;
 import com.google.api.services.mirror.model.TimelineItem;
 import com.jinhs.fetch.bo.NoteBo;
+import com.jinhs.fetch.common.BundleIdProcessHelper;
 import com.jinhs.fetch.mirror.enums.CustomActionConfigEnum;
 import com.jinhs.fetch.mirror.enums.MenuItemActionEnum;
 
 public class TimelinePopulateHelper {
 	
 	
-	public static List<TimelineItem> populateBundleNotes(List<NoteBo> notes, Mirror mirrorService) throws IOException{
+	public static List<TimelineItem> populateBundleNotes(List<NoteBo> notes, Mirror mirrorService, int sequenceId) throws IOException{
 		List<TimelineItem> list = new ArrayList<TimelineItem>();
 		
 		int max = 3;
@@ -26,7 +27,8 @@ public class TimelinePopulateHelper {
 		InputStreamContent mediaContent = new InputStreamContent("image/jpeg", new ByteArrayInputStream(note.getImage_note()));*/
 			if(note.getValuation()==0){
 				TimelineItem timelineItem =  mirrorService.timeline().get(note.getTimeline_id()).execute();
-				timelineItem.setBundleId("testbundleid");
+				String identityKey = BundleIdProcessHelper.generateIdentityKey(note);
+				timelineItem.setBundleId(BundleIdProcessHelper.generateBundleId(identityKey, sequenceId));
 				list.add(timelineItem);
 				i++;
 				if(i>=max)
@@ -41,9 +43,14 @@ public class TimelinePopulateHelper {
 	}
 	
 	public static void addCustomMenuItem(List<MenuItem> menuItemList, CustomActionConfigEnum config){
+		addCustomMenuItemWithPayload(menuItemList, config, null);
+	}
+	
+	public static void addCustomMenuItemWithPayload(List<MenuItem> menuItemList, CustomActionConfigEnum config, String payload){
 		MenuItem customItem = new MenuItem();
 		customItem.setAction(config.getType());
-		customItem.setId(config.getName());
+		if(payload!=null)
+			customItem.setId(payload);
 		customItem.setValues(buildMenuValues(config));
 		menuItemList.add(customItem);
 	}

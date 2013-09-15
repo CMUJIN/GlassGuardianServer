@@ -1,9 +1,7 @@
 package com.jinhs.fetch.common;
 
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -52,23 +50,6 @@ public class NoteBoHelperImpl implements NoteBoHelper {
 		TimelineItem timelineItem = mirror.timeline().get(notification.getItemId()) .execute();
 		if(hasContent)
 			noteBo.setText_note(timelineItem.getText());
-		/*if(hasContent&&timelineItem.getAttachments() != null && timelineItem.getAttachments().size() > 0){
-			// Get the first attachment
-			String attachmentId = timelineItem.getAttachments().get(0).getId();
-			// Get the attachment content
-			InputStream stream = mirrorClient.getAttachmentInputStream(credential, timelineItem.getId(), attachmentId);
-			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-			int nRead;
-			byte[] data = new byte[16384];
-
-			while ((nRead = stream.read(data, 0, data.length)) != -1) {
-			  buffer.write(data, 0, nRead);
-			}
-
-			buffer.flush();
-			noteBo.setImage_note(buffer.toByteArray());
-		}*/
 		
 		noteBo.setTimeline_id(timelineItem.getId());
 		if(timelineItem.getAttachments()!=null)
@@ -94,5 +75,4 @@ public class NoteBoHelperImpl implements NoteBoHelper {
 			Credential credential, Location location) throws IOException {
 		return populateNoteBo(notification, credential, location, -1, false);
 	}
-
 }

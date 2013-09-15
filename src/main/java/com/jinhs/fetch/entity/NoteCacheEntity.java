@@ -40,7 +40,7 @@ public class NoteCacheEntity {
 	private String timeline_id;
 	
 	@Column(name="SEQUENCE_ID")
-	private String sequence_id;
+	private int sequence_id;
 
 	public Key getKey() {
 		return key;
@@ -90,11 +90,11 @@ public class NoteCacheEntity {
 		this.timeline_id = timeline_id;
 	}
 
-	public String getSequence_id() {
+	public int getSequence_id() {
 		return sequence_id;
 	}
 
-	public void setSequence_id(String sequence_id) {
+	public void setSequence_id(int sequence_id) {
 		this.sequence_id = sequence_id;
 	}
 

@@ -15,6 +15,7 @@ import org.datanucleus.exceptions.ClassNotResolvedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jinhs.fetch.bo.CacheNoteBo;
 import com.jinhs.fetch.bo.NoteBo;
 import com.jinhs.fetch.entity.NoteCacheEntity;
 import com.jinhs.fetch.entity.NoteEntity;
@@ -104,7 +105,27 @@ public class DBTransService {
 		List<NoteBo> noteList = convertCacheToNoteBoList(result);
 		return noteList;
 	}
-	// TODO insert cache
+	
+	public void insertCacheNote(List<CacheNoteBo> cacheBoList) throws PersistenceException {
+		for(CacheNoteBo cacheBo: cacheBoList){
+			NoteCacheEntity cacheEntity = populateNoteCacheEntity(cacheBo);
+			em.persist(cacheEntity);
+		}
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+	
+	private NoteCacheEntity populateNoteCacheEntity(CacheNoteBo cacheBo) {
+		NoteCacheEntity cacheEntity = new NoteCacheEntity();
+		NoteBo note = cacheBo.getNoteBo();
+		cacheEntity.setDate(note.getDate());
+		cacheEntity.setIdentity_key(cacheBo.getIdentity_key());
+		cacheEntity.setLatitude(note.getLatitude());
+		cacheEntity.setLongtitude(note.getLongtitude());
+		cacheEntity.setSequence_id(cacheBo.getSequenceId());
+		return cacheEntity;
+	}
+
 	private List<NoteBo> convertCacheToNoteBoList(List<NoteCacheEntity> result) {
 		List<NoteBo> noteBoList = new ArrayList<NoteBo>();
 		for(NoteCacheEntity entity: result)

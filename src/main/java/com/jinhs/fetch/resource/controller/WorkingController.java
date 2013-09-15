@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.ListIterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.services.mirror.model.Notification;
-import com.google.api.services.mirror.model.UserAction;
 import com.google.gson.Gson;
 import com.jinhs.fetch.handler.DeleteHandler;
 import com.jinhs.fetch.handler.DislikeHandler;
 import com.jinhs.fetch.handler.FetchHandler;
+import com.jinhs.fetch.handler.FetchMoreHandler;
 import com.jinhs.fetch.handler.LikeHandler;
 import com.jinhs.fetch.handler.PushHandler;
 import com.jinhs.fetch.mirror.AuthUtil;
@@ -53,6 +50,9 @@ public class WorkingController {
 
 	@Autowired
 	DeleteHandler deleteHandler;
+	
+	@Autowired
+	FetchMoreHandler fetchMoreHandler;
 
 	/*
 	 * @RequestMapping("/get",method = RequestMethod.GET) public void
@@ -119,16 +119,8 @@ public class WorkingController {
 			}
 
 			if(actionPayload.startsWith(CustomActionConfigEnum.FETCH_MORE.getName())){
-				Pattern patternGroupId = Pattern.compile("&G([^<]+?)&H");
-				Pattern patternIndex = Pattern.compile("&ID([^<]+?)END");
-				Matcher matcher = patternGroupId.matcher(actionPayload);
-				matcher.find();
-				String groupId = matcher.group(1);
-				
-			    matcher = patternIndex.matcher(actionPayload);
-			    matcher.find();
-				String index = matcher.group(1);
-				// FETCH MORE
+				fetchMoreHandler.fetchMore(actionPayload, credential);
+				return;
 			}
 		}
 		
