@@ -2,8 +2,6 @@ package com.jinhs.fetch.handler;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -15,11 +13,16 @@ import com.google.api.services.mirror.model.Location;
 import com.google.api.services.mirror.model.MenuItem;
 import com.google.api.services.mirror.model.Notification;
 import com.google.api.services.mirror.model.TimelineItem;
-import com.jinhs.fetch.bo.CacheNoteBo;
+import com.google.appengine.api.taskqueue.Queue;
+import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.TaskOptions;
+import com.google.appengine.api.taskqueue.TaskOptions.Method;
+import com.google.gson.Gson;
 import com.jinhs.fetch.bo.NoteBo;
 import com.jinhs.fetch.common.AppConstants;
 import com.jinhs.fetch.common.BundleIdProcessHelper;
 import com.jinhs.fetch.common.DataProcessHelper;
+import com.jinhs.fetch.common.FetchCacheTaskPayload;
 import com.jinhs.fetch.common.GeoCodingHelper;
 import com.jinhs.fetch.common.NoteBoHelper;
 import com.jinhs.fetch.mirror.MirrorClient;
@@ -49,10 +52,7 @@ public class FetchHandlerImpl implements FetchHandler {
 	GeoCodingHelper geoCodingHelper;
 	
 	@Autowired
-	FetchCacheHandler fetchCacheHanler;
-	
-	@Autowired
-	NoteBoHelper noteBoHelper;
+	ZoneRateHandler zoneRateHandler;
 	
 	@Override
 	public void fetch(Notification notification, Credential credential) throws IOException {
@@ -64,29 +64,26 @@ public class FetchHandlerImpl implements FetchHandler {
 		}
 		
 		List<NoteBo> noteListByCoordinate = null;
-		List<NoteBo> noteListByAddress = null;
-		List<NoteBo> noteListByZip = null;
-		String zipCode = geoCodingHelper.getZipCode(location.getLatitude().doubleValue(), location.getLongitude().doubleValue());
-		
-		
-		noteListByCoordinate = transService.fetchNotesByCoordinate(notification.getUserToken(), location.getLatitude(), location.getLongitude());
-		
-		if(location.getAddress()!=null)
-			noteListByAddress = transService.fetchNotesByAddress(notification.getUserToken(), location.getAddress());
-		
-		if(zipCode!=null)
-			noteListByZip =  transService.fetchNotesByZip(notification.getUserToken(), zipCode);
-		
+		String zipCode = geoCodingHelper.getZipCode(location.getLatitude()
+				.doubleValue(), location.getLongitude().doubleValue());
+		// query first group notes
+		noteListByCoordinate = transService.fetchFirstGroupNotesByCoordinate(
+				notification.getUserToken(), location.getLatitude(),
+				location.getLongitude(), AppConstants.BUNDLE_SIZE);
 		List<NoteBo> firstGroupNotes = extractFirstGroupNotes(noteListByCoordinate);
 		
-		// insert note into cache today for fetch more operation
-		LinkedList<CacheNoteBo> cacheList = populateCacheList(
-				noteListByCoordinate, noteListByAddress, noteListByZip);
-		fetchCacheHanler.insert(cacheList);
+		addFetchCacheTask(notification, location, firstGroupNotes);
 		
-		String valuationHtml = populateRateHTML(noteListByCoordinate,
-				noteListByAddress, noteListByZip);
+		String valuationHtml = populateRateHTML(location.getLatitude()
+				.doubleValue(), location.getLongitude().doubleValue(), "no address avaliable", zipCode);
 		
+		processTimelineResponse(credential, zipCode, firstGroupNotes,
+				valuationHtml);
+	}
+
+	private void processTimelineResponse(Credential credential, String zipCode,
+			List<NoteBo> firstGroupNotes, String valuationHtml)
+			throws IOException {
 		List<MenuItem> actionList = new ArrayList<MenuItem>();
 		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
 		TimelinePopulateHelper.addCustomMenuItem(actionList, CustomActionConfigEnum.FETCH_MORE);
@@ -107,16 +104,17 @@ public class FetchHandlerImpl implements FetchHandler {
 		LOG.info("fetch successfully, zipCode:"+zipCode);
 	}
 
-	private LinkedList<CacheNoteBo> populateCacheList(
-			List<NoteBo> noteListByCoordinate, List<NoteBo> noteListByAddress,
-			List<NoteBo> noteListByZip) {
-		LinkedList<CacheNoteBo> cacheList = new LinkedList<CacheNoteBo>();
-		HashSet<String> set = new HashSet<String>();
-
-		processCacheNoteBoList(noteListByCoordinate, cacheList, set);
-		processCacheNoteBoList(noteListByAddress, cacheList, set);
-		processCacheNoteBoList(noteListByZip, cacheList, set);
-		return cacheList;
+	private void addFetchCacheTask(Notification notification,
+			Location location, List<NoteBo> firstGroupNotes) {
+		//Add new task to task queue
+		FetchCacheTaskPayload payload = new FetchCacheTaskPayload();
+		payload.setFirstGroupNotes(firstGroupNotes);
+		payload.setUserToken(notification.getUserToken());
+		payload.setLocation(location);
+		
+		Queue queue = QueueFactory.getDefaultQueue();
+		TaskOptions task = TaskOptions.Builder.withUrl("/api/fetchcache").method(Method.POST).payload(new Gson().toJson(payload));
+		queue.addAsync(task);
 	}
 
 	private List<NoteBo> extractFirstGroupNotes(List<NoteBo> noteListByCoordinate) {
@@ -132,11 +130,10 @@ public class FetchHandlerImpl implements FetchHandler {
 		return firstGroup;
 	}
 
-	private String populateRateHTML(List<NoteBo> noteListByCoordinate,
-			List<NoteBo> noteListByAddress, List<NoteBo> noteListByZip) {
-		int rateByCoordinate = dataProcessHelper.populateValutionByCoordinate(noteListByCoordinate);
-		int rateByAddress = dataProcessHelper.populateValutionByAddress(noteListByAddress);
-		int rateByZip = dataProcessHelper.populateValutionByZip(noteListByZip);
+	private String populateRateHTML(double latitude, double longtitude, String address, String zip_code) throws IOException {
+		int rateByCoordinate = zoneRateHandler.getRateByCoordiate(latitude, longtitude);
+		int rateByAddress = zoneRateHandler.getRateByAddress(address);
+		int rateByZip = zoneRateHandler.getRateByZip(zip_code);
 		StringBuffer sb = new StringBuffer();
 		sb.append("<article class=\"auto-paginate\">");
 		sb.append("<ul>");
@@ -159,19 +156,4 @@ public class FetchHandlerImpl implements FetchHandler {
 		sb.append("</article>");
 		return sb.toString();
 	}
-	
-	private void processCacheNoteBoList(List<NoteBo> noteListByCoordinate,
-			LinkedList<CacheNoteBo> list, HashSet<String> set) {
-		for (NoteBo note : noteListByCoordinate) {
-			String identity_key = BundleIdProcessHelper.generateIdentityKey(note);
-			if (!set.contains(identity_key)&&note.getValuation()==0) {
-				CacheNoteBo cache = new CacheNoteBo();
-				cache.setIdentity_key(identity_key);
-				cache.setNoteBo(note);
-				list.add(cache);
-				set.add(identity_key);
-			}
-		}
-	}
-
 }

@@ -29,8 +29,8 @@ import com.jinhs.fetch.mirror.enums.MenuItemActionEnum;
 
 @RequestMapping("/worker")
 @Controller
-public class WorkingController {
-	private static final Logger LOG = Logger.getLogger(WorkingController.class
+public class NotificationWorker {
+	private static final Logger LOG = Logger.getLogger(NotificationWorker.class
 			.getSimpleName());
 
 	@Autowired

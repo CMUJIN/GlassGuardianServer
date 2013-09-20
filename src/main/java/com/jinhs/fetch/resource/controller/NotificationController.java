@@ -32,8 +32,8 @@ public class NotificationController {
 			HttpServletResponse httpResponse) throws IOException {
 
 		Queue queue = QueueFactory.getDefaultQueue();
-		String payload2 = new Gson().toJson(request);
-		TaskOptions task = TaskOptions.Builder.withUrl("/api/worker").method(Method.POST).payload(payload2);
+		String payload = new Gson().toJson(request);
+		TaskOptions task = TaskOptions.Builder.withUrl("/api/worker").method(Method.POST).payload(payload);
 		queue.addAsync(task);
 		
 		// Respond with OK and status 200 in a timely fashion to prevent

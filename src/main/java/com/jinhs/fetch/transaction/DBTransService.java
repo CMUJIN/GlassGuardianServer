@@ -17,8 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.jinhs.fetch.bo.CacheNoteBo;
 import com.jinhs.fetch.bo.NoteBo;
+import com.jinhs.fetch.bo.ZoneRateBo;
 import com.jinhs.fetch.entity.NoteCacheEntity;
 import com.jinhs.fetch.entity.NoteEntity;
+import com.jinhs.fetch.entity.ZoneRateEntity;
 
 @Service
 @Transactional
@@ -37,6 +39,25 @@ public class DBTransService {
 			query.setParameter("latitude", latitude);
 			query.setParameter("longtitude", longtitude);
 			query.setParameter("userid", userId);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("fetchNotesByCoordinate DB exception");
+			return Collections.EMPTY_LIST;
+		}
+		List<NoteBo> noteList = convertToNoteBoList(result);
+		return noteList;
+	}
+	
+	@Transactional(readOnly = true)
+	public List<NoteBo> fetchFirstGroupNotesByCoordinate(String userId, double latitude, double longtitude, int maxNum) throws PersistenceException{
+		List<NoteEntity> result;
+		try{
+			Query query = em.createQuery(
+					"select c from NoteEntity c where c.latitude=:latitude and c.longtitude=:longtitude and c.user_id=:userid order by c.date desc ");
+			query.setParameter("latitude", latitude);
+			query.setParameter("longtitude", longtitude);
+			query.setParameter("userid", userId);
+			query.setMaxResults(maxNum);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
 			LOG.error("fetchNotesByCoordinate DB exception");
@@ -88,7 +109,6 @@ public class DBTransService {
 		em.flush();
 	}
 	
-	
 	@Transactional(readOnly = true)
 	public List<NoteBo> fetchNotesFromCache(String identityKey, int sequenceId) throws PersistenceException{
 		List<NoteCacheEntity> result;
@@ -106,6 +126,163 @@ public class DBTransService {
 		return noteList;
 	}
 	
+	@Transactional(readOnly = true)
+	public ZoneRateBo getRateByCoordinate(double latitude, double longtitude) throws PersistenceException{
+		List<ZoneRateEntity> result;
+		try{
+			Query query = em.createQuery(
+					"select c from NoteEntity c where c.latitude=:latitude and c.longtitude=:longtitude");
+			query.setParameter("latitude", latitude);
+			query.setParameter("longtitude", longtitude);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("fetchNotesByCoordinate DB exception");
+			return null;
+		}
+		if(result.isEmpty())
+			return null;
+		return convertToZoneRateBo(result.get(0));
+	}
+	
+	@Transactional(readOnly = true)
+	public ZoneRateBo getRateByAddress(String address) throws PersistenceException{
+		List<ZoneRateEntity> result;
+		try{
+			Query query = em.createQuery(
+					"select c from NoteEntity c where c.address=:address");
+			query.setParameter("address", address);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("fetchNotesByCoordinate DB exception");
+			return null;
+		}
+		if(result.isEmpty())
+			return null;
+		return convertToZoneRateBo(result.get(0));
+	}
+	
+	@Transactional(readOnly = true)
+	public ZoneRateBo getRateByZip(String zip_code) throws PersistenceException{
+		List<ZoneRateEntity> result;
+		try{
+			Query query = em.createQuery(
+					"select c from NoteEntity c where c.zip_code=:zip_code ");
+			query.setParameter("zip_code", zip_code);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("fetchNotesByCoordinate DB exception");
+			return null;
+		}
+		if(result.isEmpty())
+			return null;
+		return convertToZoneRateBo(result.get(0));
+	}
+
+	public void updateRateByCoordinate(double latitude, double longtitude, boolean isLike) throws PersistenceException{
+		List<ZoneRateEntity> result = null;
+		try{
+			Query query = em.createQuery(
+					"select c from NoteEntity c where c.latitude=:latitude and c.longtitude=:longtitude");
+			query.setParameter("latitude", latitude);
+			query.setParameter("longtitude", longtitude);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("fetchNotesByCoordinate DB exception");
+		}
+		ZoneRateEntity rateEntity;
+		if(result==null||result.isEmpty()){
+			rateEntity = new ZoneRateEntity();
+			rateEntity.setLatitude(latitude);
+			rateEntity.setLongtitude(longtitude);
+			if(isLike)
+				rateEntity.setLike_hit(1);
+			else
+				rateEntity.setDislike_hit(1);
+		}
+		else{
+			rateEntity = result.get(0);
+			if(isLike)
+				rateEntity.setLike_hit(rateEntity.getLike_hit()+1);
+			else
+				rateEntity.setDislike_hit(rateEntity.getDislike_hit()+1);
+		}
+		em.persist(rateEntity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+	
+	public void updateRateByAddress(String address, boolean isLike) throws PersistenceException{
+		List<ZoneRateEntity> result = null;
+		try{
+			Query query = em.createQuery(
+					"select c from NoteEntity c where c.address=:address");
+			query.setParameter("address", address);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("fetchNotesByCoordinate DB exception");
+		}
+		ZoneRateEntity rateEntity;
+		if(result==null||result.isEmpty()){
+			rateEntity = new ZoneRateEntity();
+			rateEntity.setAddress(address);
+			if(isLike)
+				rateEntity.setLike_hit(1);
+			else
+				rateEntity.setDislike_hit(1);
+		}
+		else{
+			rateEntity = result.get(0);
+			if(isLike)
+				rateEntity.setLike_hit(rateEntity.getLike_hit()+1);
+			else
+				rateEntity.setDislike_hit(rateEntity.getDislike_hit()+1);
+		}
+		em.persist(rateEntity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+	
+	public void updateRateByZip(String zip_code, boolean isLike) throws PersistenceException{
+		List<ZoneRateEntity> result = null;
+		try{
+			Query query = em.createQuery(
+					"select c from NoteEntity c where c.zip_code=:zip_code ");
+			query.setParameter("zip_code", zip_code);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("fetchNotesByCoordinate DB exception");
+		}
+		ZoneRateEntity rateEntity;
+		if(result==null||result.isEmpty()){
+			rateEntity = new ZoneRateEntity();
+			rateEntity.setZip_code(zip_code);
+			if(isLike)
+				rateEntity.setLike_hit(1);
+			else
+				rateEntity.setDislike_hit(1);
+		}
+		else{
+			rateEntity = result.get(0);
+			if(isLike)
+				rateEntity.setLike_hit(rateEntity.getLike_hit()+1);
+			else
+				rateEntity.setDislike_hit(rateEntity.getDislike_hit()+1);
+		}
+		em.persist(rateEntity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+
+	private ZoneRateBo convertToZoneRateBo(ZoneRateEntity zoneRate) {
+		ZoneRateBo rateBo = new ZoneRateBo();
+		rateBo.setAddress(zoneRate.getAddress());
+		rateBo.setDislike_hit(zoneRate.getDislike_hit());
+		rateBo.setLatitude(zoneRate.getLatitude());
+		rateBo.setLongtitude(zoneRate.getLongtitude());
+		rateBo.setZip_code(zoneRate.getZip_code());
+		return rateBo;
+	}
+
 	public void insertCacheNote(List<CacheNoteBo> cacheBoList) throws PersistenceException {
 		for(CacheNoteBo cacheBo: cacheBoList){
 			NoteCacheEntity cacheEntity = populateNoteCacheEntity(cacheBo);

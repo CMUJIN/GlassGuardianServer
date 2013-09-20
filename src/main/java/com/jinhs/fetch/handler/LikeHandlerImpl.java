@@ -10,6 +10,7 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.services.mirror.model.Location;
 import com.google.api.services.mirror.model.Notification;
 import com.jinhs.fetch.bo.NoteBo;
+import com.jinhs.fetch.common.GeoCodingHelper;
 import com.jinhs.fetch.common.NoteBoHelperImpl;
 import com.jinhs.fetch.mirror.MirrorClient;
 import com.jinhs.fetch.mirror.MirrorUtil;
@@ -31,6 +32,13 @@ public class LikeHandlerImpl implements LikeHandler{
 	@Autowired
 	MirrorClient mirrorClient;
 	
+	@Autowired
+	ZoneRateHandler zoneRateHandler;
+	
+	@Autowired
+	GeoCodingHelper geoCodingHelper;
+	
+	
 	@Override
 	public void like(Notification notification, Credential credential) throws IOException {
 		LOG.info("Like operation");
@@ -41,11 +49,16 @@ public class LikeHandlerImpl implements LikeHandler{
 		}
 		NoteBo noteBo = noteBoHelper.populateLikeNoteBo(notification, credential, location);
 		transService.insertNote(noteBo);
-		/*List<MenuItem> actionList = new ArrayList<MenuItem>();
-		actionList.add(new MenuItem().setAction(MenuItemActionEnum.DELETE.getValue()));
-		TimelineItem item = mirrorUtil.populateTimeLine("Like Successfully", actionList);
-		mirrorClient.insertTimelineItem(credential, item);*/
+		
+		updateZoneRate(location, false);
+
 		LOG.info("Like Successfully");
 	}
 
+	private void updateZoneRate(Location location, boolean isLike) throws IOException {
+		String zipCode = geoCodingHelper.getZipCode(location.getLatitude()
+				.doubleValue(), location.getLongitude().doubleValue());
+		zoneRateHandler.updateRateByCoordiate(location.getLatitude(), location.getLongitude(), isLike);
+		zoneRateHandler.updateRateByZip(zipCode, isLike);
+	}
 }
