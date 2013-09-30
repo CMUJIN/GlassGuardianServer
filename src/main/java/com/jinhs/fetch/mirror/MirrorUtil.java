@@ -46,6 +46,11 @@ public class MirrorUtil {
 			List<MenuItem> menuItemList) {
 		return populateTimeLine(html, null, menuItemList, true);
 	}
+	
+	public TimelineItem populateTimeLineWithHtml(String html) {
+		return populateTimeLine(html, null, null, true);
+	}
+
 
 	public Contact pupulateContact(String contact_id, String contact_name,
 			String imageUrl) {

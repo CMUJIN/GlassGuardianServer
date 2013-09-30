@@ -1,9 +1,11 @@
 package com.jinhs.fetch.common;
 
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.jinhs.fetch.bo.NoteBo;
+import com.jinhs.fetch.mirror.enums.CustomActionConfigEnum;
 
 public class BundleIdProcessHelper {
 	/**
@@ -22,18 +24,20 @@ public class BundleIdProcessHelper {
 
 	public static String generateBundleId(String identityKey, int sequenceId) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("FETCHMORE");
+		sb.append(CustomActionConfigEnum.FETCH_MORE.getName());
 		sb.append("#S");
 		sb.append(sequenceId);
 		sb.append("#ID");
 		sb.append(identityKey);
+		sb.append("#T");
+		sb.append(new Date().getTime());
 		return sb.toString();
 	}
 	
 
 	public static String parseIdentityKey(String actionPayload) {
 		Matcher matcher;
-		Pattern patternIdentityKey = Pattern.compile("#ID([^<]+?)");
+		Pattern patternIdentityKey = Pattern.compile("#ID([^<]+?)#T");
 	    matcher = patternIdentityKey.matcher(actionPayload);
 	    matcher.find();
 		String identityKey = matcher.group(1);

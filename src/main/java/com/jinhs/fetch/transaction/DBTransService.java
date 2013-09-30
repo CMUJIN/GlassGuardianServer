@@ -41,7 +41,7 @@ public class DBTransService {
 			query.setParameter("userid", userId);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
-			LOG.error("fetchNotesByCoordinate DB exception");
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
 			return Collections.EMPTY_LIST;
 		}
 		List<NoteBo> noteList = convertToNoteBoList(result);
@@ -60,7 +60,7 @@ public class DBTransService {
 			query.setMaxResults(maxNum);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
-			LOG.error("fetchNotesByCoordinate DB exception");
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
 			return Collections.EMPTY_LIST;
 		}
 		List<NoteBo> noteList = convertToNoteBoList(result);
@@ -77,7 +77,7 @@ public class DBTransService {
 			query.setParameter("userid", userId);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
-			LOG.info("fetchNotesByAddress DB exception");
+			LOG.info("fetchNotesByAddress DB exception "+e.getMessage());
 			return Collections.EMPTY_LIST;
 		}
 		List<NoteBo> noteList = convertToNoteBoList(result);
@@ -94,7 +94,7 @@ public class DBTransService {
 			query.setParameter("userid", userId);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
-			LOG.info("fetchNotes DB exception");
+			LOG.info("fetchNotes DB exception "+e.getMessage());
 			return Collections.EMPTY_LIST;
 		}
 		List<NoteBo> noteList = convertToNoteBoList(result);
@@ -119,7 +119,7 @@ public class DBTransService {
 			query.setParameter("sequence_id", sequenceId);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
-			LOG.error("fetchNotesByCoordinate DB exception");
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
 			return Collections.EMPTY_LIST;
 		}
 		List<NoteBo> noteList = convertCacheToNoteBoList(result);
@@ -131,12 +131,12 @@ public class DBTransService {
 		List<ZoneRateEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from NoteEntity c where c.latitude=:latitude and c.longtitude=:longtitude");
+					"select c from ZoneRateEntity c where c.latitude=:latitude and c.longtitude=:longtitude");
 			query.setParameter("latitude", latitude);
 			query.setParameter("longtitude", longtitude);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
-			LOG.error("fetchNotesByCoordinate DB exception");
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
 			return null;
 		}
 		if(result.isEmpty())
@@ -149,11 +149,11 @@ public class DBTransService {
 		List<ZoneRateEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from NoteEntity c where c.address=:address");
+					"select c from ZoneRateEntity c where c.address=:address");
 			query.setParameter("address", address);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
-			LOG.error("fetchNotesByCoordinate DB exception");
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
 			return null;
 		}
 		if(result.isEmpty())
@@ -166,11 +166,11 @@ public class DBTransService {
 		List<ZoneRateEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from NoteEntity c where c.zip_code=:zip_code ");
+					"select c from ZoneRateEntity c where c.zip_code=:zip_code ");
 			query.setParameter("zip_code", zip_code);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
-			LOG.error("fetchNotesByCoordinate DB exception");
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
 			return null;
 		}
 		if(result.isEmpty())
@@ -182,12 +182,13 @@ public class DBTransService {
 		List<ZoneRateEntity> result = null;
 		try{
 			Query query = em.createQuery(
-					"select c from NoteEntity c where c.latitude=:latitude and c.longtitude=:longtitude");
+					"select c from ZoneRateEntity c where c.latitude=:latitude and c.longtitude=:longtitude");
 			query.setParameter("latitude", latitude);
 			query.setParameter("longtitude", longtitude);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
-			LOG.error("fetchNotesByCoordinate DB exception");
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
+			return;
 		}
 		ZoneRateEntity rateEntity;
 		if(result==null||result.isEmpty()){
@@ -215,11 +216,12 @@ public class DBTransService {
 		List<ZoneRateEntity> result = null;
 		try{
 			Query query = em.createQuery(
-					"select c from NoteEntity c where c.address=:address");
+					"select c from ZoneRateEntity c where c.address=:address");
 			query.setParameter("address", address);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
-			LOG.error("fetchNotesByCoordinate DB exception");
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
+			return;
 		}
 		ZoneRateEntity rateEntity;
 		if(result==null||result.isEmpty()){
@@ -246,11 +248,12 @@ public class DBTransService {
 		List<ZoneRateEntity> result = null;
 		try{
 			Query query = em.createQuery(
-					"select c from NoteEntity c where c.zip_code=:zip_code ");
+					"select c from ZoneRateEntity c where c.zip_code=:zip_code ");
 			query.setParameter("zip_code", zip_code);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
-			LOG.error("fetchNotesByCoordinate DB exception");
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
+			return;
 		}
 		ZoneRateEntity rateEntity;
 		if(result==null||result.isEmpty()){
@@ -300,6 +303,8 @@ public class DBTransService {
 		cacheEntity.setLatitude(note.getLatitude());
 		cacheEntity.setLongtitude(note.getLongtitude());
 		cacheEntity.setSequence_id(cacheBo.getSequenceId());
+		if(note.getAttachment_id()!=null)
+			cacheEntity.setAttachment_id(note.getAttachment_id());
 		return cacheEntity;
 	}
 

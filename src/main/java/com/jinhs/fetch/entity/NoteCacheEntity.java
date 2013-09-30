@@ -41,6 +41,9 @@ public class NoteCacheEntity {
 	
 	@Column(name="SEQUENCE_ID")
 	private int sequence_id;
+	
+	@Column(name="ATTACHMENT_ID")
+	private String attachment_id;
 
 	public Key getKey() {
 		return key;
@@ -104,5 +107,13 @@ public class NoteCacheEntity {
 
 	public void setIdentity_key(String identity_key) {
 		this.identity_key = identity_key;
+	}
+
+	public String getAttachment_id() {
+		return attachment_id;
+	}
+
+	public void setAttachment_id(String attachment_id) {
+		this.attachment_id = attachment_id;
 	}
 }

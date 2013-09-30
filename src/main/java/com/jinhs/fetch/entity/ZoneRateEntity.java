@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 import com.google.appengine.api.datastore.Key;
 
-@Table(name="NOTES")
+@Table(name="ZONE_RATE")
 @Entity
 public class ZoneRateEntity {
 	@Id

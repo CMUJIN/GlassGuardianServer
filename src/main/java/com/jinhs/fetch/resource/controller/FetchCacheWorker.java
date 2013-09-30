@@ -7,16 +7,18 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.google.api.services.mirror.model.Location;
 import com.google.gson.Gson;
 import com.jinhs.fetch.bo.CacheNoteBo;
+import com.jinhs.fetch.bo.LocationBo;
 import com.jinhs.fetch.bo.NoteBo;
 import com.jinhs.fetch.common.BundleIdProcessHelper;
 import com.jinhs.fetch.common.FetchCacheTaskPayload;
@@ -27,6 +29,8 @@ import com.jinhs.fetch.transaction.DBTransService;
 @RequestMapping("/fetchcache")
 @Controller
 public class FetchCacheWorker {
+	private static final Logger LOG = Logger.getLogger(FetchCacheWorker.class.getSimpleName());
+	
 	@Autowired
 	DBTransService transService;
 	
@@ -38,30 +42,26 @@ public class FetchCacheWorker {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public void process(@RequestBody String payload, HttpServletResponse httpResponse) throws IOException {
-		httpResponse.setContentType("text/html");
-		Writer writer = httpResponse.getWriter();
-		writer.append("OK");
-		writer.close();
+		httpResponse.getOutputStream().close();
+		
+		LOG.info("fetchCache");
 		
 		FetchCacheTaskPayload taskPayload =  new Gson().fromJson(payload, FetchCacheTaskPayload.class);
 		List<NoteBo> firstGroupList = taskPayload.getFirstGroupNotes();
-		Location location = taskPayload.getLocation();
+		LocationBo location = taskPayload.getLocation();
 		String userToken = taskPayload.getUserToken();
 		
 		List<NoteBo> noteListByCoordinate = null;
 		List<NoteBo> noteListByAddress = null;
 		List<NoteBo> noteListByZip = null;
-		String zipCode = geoCodingHelper.getZipCode(location.getLatitude()
-				.doubleValue(), location.getLongitude().doubleValue());
-
 		noteListByCoordinate = transService.fetchNotesByCoordinate(userToken,
 				location.getLatitude(), location.getLongitude());
 
 		if(location.getAddress()!=null)
 			noteListByAddress = transService.fetchNotesByAddress(userToken, location.getAddress());
 		
-		if(zipCode!=null)
-			noteListByZip =  transService.fetchNotesByZip(userToken, zipCode);
+		if(location.getZipCode()!=null)
+			noteListByZip =  transService.fetchNotesByZip(userToken, location.getZipCode());
 		
 		// insert note into cache today for fetch more operation
 		LinkedList<CacheNoteBo> cacheList = populateCacheList(firstGroupList,
@@ -81,15 +81,17 @@ public class FetchCacheWorker {
 		return cacheList;
 	}
 
-	private void processCacheNoteBoList(List<NoteBo> noteListByCoordinate,
-			LinkedList<CacheNoteBo> list, HashSet<String> set) {
-		for (NoteBo note : noteListByCoordinate) {
+	private void processCacheNoteBoList(List<NoteBo> noteList,
+			LinkedList<CacheNoteBo> cacheList, HashSet<String> set) {
+		if(noteList.isEmpty())
+			return;
+		for (NoteBo note : noteList) {
 			String identity_key = BundleIdProcessHelper.generateIdentityKey(note);
-			if (!set.contains(identity_key)&&note.getValuation()==0) {
+			if (!set.contains(identity_key)) {
 				CacheNoteBo cache = new CacheNoteBo();
 				cache.setIdentity_key(identity_key);
 				cache.setNoteBo(note);
-				list.add(cache);
+				cacheList.add(cache);
 				set.add(identity_key);
 			}
 		}

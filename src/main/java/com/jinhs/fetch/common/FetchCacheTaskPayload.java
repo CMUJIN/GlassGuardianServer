@@ -3,11 +3,12 @@ package com.jinhs.fetch.common;
 import java.util.List;
 
 import com.google.api.services.mirror.model.Location;
+import com.jinhs.fetch.bo.LocationBo;
 import com.jinhs.fetch.bo.NoteBo;
 
 public class FetchCacheTaskPayload {
 	private List<NoteBo> firstGroupNotes;
-	private Location location;
+	private LocationBo location;
 	private String userToken;
 
 	public List<NoteBo> getFirstGroupNotes() {
@@ -18,11 +19,11 @@ public class FetchCacheTaskPayload {
 		this.firstGroupNotes = firstGroupNotes;
 	}
 
-	public Location getLocation() {
+	public LocationBo getLocation() {
 		return location;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(LocationBo location) {
 		this.location = location;
 	}
 

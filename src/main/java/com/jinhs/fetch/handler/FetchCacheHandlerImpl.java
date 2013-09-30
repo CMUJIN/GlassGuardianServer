@@ -5,12 +5,14 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.jinhs.fetch.bo.CacheNoteBo;
 import com.jinhs.fetch.bo.NoteBo;
 import com.jinhs.fetch.common.AppConstants;
 import com.jinhs.fetch.transaction.DBTransService;
 
+@Component
 public class FetchCacheHandlerImpl implements FetchCacheHandler {
 	private static final Logger LOG = Logger.getLogger(FetchCacheHandlerImpl.class.getSimpleName());
 	

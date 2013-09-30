@@ -3,7 +3,7 @@ package com.jinhs.fetch.resource.controller;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,21 +60,23 @@ public class NotificationWorker {
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public void process(@RequestBody String payload, HttpServletResponse httpResponse) throws IOException {
-		httpResponse.setContentType("text/html");
-		Writer writer = httpResponse.getWriter();
-		writer.append("OK");
-		writer.close();
+		httpResponse.getOutputStream().close();
 		
 		Notification request = new Gson().fromJson(payload, Notification.class);
 		Iterator<?> actionMapItr = request.getUserActions().iterator();
 		
-		LinkedHashMap<String, String> actionInfoMap = null;
+		Map<String, String> actionInfoMap;
 		String actionType = "UNKNOWN";
 		String actionPayload = "UNKNOWN";
 		if(actionMapItr.hasNext()){
-			actionInfoMap = (LinkedHashMap)actionMapItr.next();
+			actionInfoMap = (Map<String, String>)actionMapItr.next();
 			actionType = actionInfoMap.get("type");
-			actionType = actionInfoMap.get("value");
+			actionPayload = actionInfoMap.get("payload");
+			Iterator itr = actionInfoMap.keySet().iterator(); 
+			while(itr.hasNext()){
+				String key = (String) itr.next();
+				LOG.info("map key: "+key+" value:"+actionInfoMap.get(key));
+			}
 		}
 		else{
 			return;

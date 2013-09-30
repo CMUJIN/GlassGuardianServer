@@ -8,6 +8,7 @@
         <provider>org.datanucleus.api.jpa.PersistenceProviderImpl</provider>
          <class>com.jinhs.fetch.entity.NoteEntity</class>
          <class>com.jinhs.fetch.entity.NoteCacheEntity</class>
+         <class>com.jinhs.fetch.entity.ZoneRateEntity</class>
         <properties>
             <property name="datanucleus.NontransactionalRead" value="true"/>
             <property name="datanucleus.NontransactionalWrite" value="true"/>

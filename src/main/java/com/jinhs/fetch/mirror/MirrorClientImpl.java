@@ -17,6 +17,8 @@ package com.jinhs.fetch.mirror;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -225,6 +227,18 @@ public class MirrorClientImpl implements MirrorClient {
 		Location location = getMirror(credential).locations().get("latest").execute();
 		if(location==null)
 			LOG.info("location is null");
+		formatLocation(location);
 		return location;
+	}
+
+	private void formatLocation(Location location) {
+		double latitude = location.getLatitude();
+		double longtitude = location.getLongitude();
+		DecimalFormat df = new DecimalFormat("#.#####");
+		df.setRoundingMode(RoundingMode.HALF_UP);
+		latitude = Double.parseDouble(df.format(latitude));
+		longtitude = Double.parseDouble(df.format(longtitude));
+		location.setLatitude(latitude);
+		location.setLongitude(longtitude);
 	}
 }

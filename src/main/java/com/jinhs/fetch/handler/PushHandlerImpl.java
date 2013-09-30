@@ -41,10 +41,6 @@ public class PushHandlerImpl implements PushHandler {
 		}
 		NoteBo noteBo = noteBoHelper.populateNoteBo(notification, credential, location);
 		transService.insertNote(noteBo);
-		/*List<MenuItem> actionList = new ArrayList<MenuItem>();
-		actionList.add(new MenuItem().setAction(MenuItemActionEnum.DELETE.getValue()));
-		TimelineItem item = mirrorUtil.populateTimeLine("Push Successfully", actionList);
-		mirrorClient.insertTimelineItem(credential, item);*/
 		LOG.info("push successfully");
 	}
 

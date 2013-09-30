@@ -6,8 +6,8 @@
 	<packaging>war</packaging>
 	<version>1.0-SNAPSHOT</version>
 
-	<groupId>com.template.gaemaven</groupId>
-	<artifactId>quicknote</artifactId>
+	<groupId>com.hujin.fetchapp</groupId>
+	<artifactId>fetchapp</artifactId>
 
 	<properties>
 		<appengine.app.version>1</appengine.app.version>
@@ -328,6 +328,13 @@
 							<targetPath>WEB-INF/classes</targetPath>
 							<includes>
 								<include>log4j.properties</include>
+							</includes>
+						</resource>
+						<resource>
+							<directory>${basedir}/src/main/resources</directory>
+							<targetPath>WEB-INF</targetPath>
+							<includes>
+								<include>datastore-indexes.xml</include>
 							</includes>
 						</resource>
 					</webResources>

@@ -1,7 +1,6 @@
 package com.jinhs.fetch.resource.controller;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.ListIterator;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.google.api.services.mirror.model.Notification;
 import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
+import com.google.appengine.api.taskqueue.RetryOptions;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.api.taskqueue.TaskOptions.Method;
 import com.google.gson.Gson;
@@ -30,10 +30,13 @@ public class NotificationController {
 	@RequestMapping(method = RequestMethod.POST)
 	public void getNotification(@RequestBody Notification request,
 			HttpServletResponse httpResponse) throws IOException {
-
+		httpResponse.getOutputStream().close();
+		
 		Queue queue = QueueFactory.getDefaultQueue();
 		String payload = new Gson().toJson(request);
 		TaskOptions task = TaskOptions.Builder.withUrl("/api/worker").method(Method.POST).payload(payload);
+		RetryOptions retryOptions = RetryOptions.Builder.withTaskRetryLimit(0);
+		task.retryOptions(retryOptions);
 		queue.addAsync(task);
 		
 		// Respond with OK and status 200 in a timely fashion to prevent
@@ -53,10 +56,7 @@ public class NotificationController {
 			LOG.info("value"+itr2.next());//return 
 		String n3 = list3.next().getClass().getSimpleName();
 		LOG.info("Receive Notification"+list.next().getClass()+"&"+"&"+n3);
-		httpResponse.setContentType("text/html");
-		Writer writer = httpResponse.getWriter();
-		writer.append("OK");
-		writer.close();
+		
 		return;
 	}
 }
