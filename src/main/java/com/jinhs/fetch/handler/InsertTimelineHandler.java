@@ -7,15 +7,24 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.jinhs.fetch.bo.NoteBo;
 
 public interface InsertTimelineHandler {
-	public  void insertBundleTimelinesWithoutCover(Credential credential,
+	public void insertBundleTimelinesWithoutCover(Credential credential,
 			List<NoteBo> noteBoList, String bundleId) throws IOException;
-	
+
 	public void insertNoMoreFetchAvaliable(Credential credential)
 			throws IOException;
+
+	public void insertFetchFirst(Credential credential, NoteBo firstNote) throws IOException;
+
+	public void insertNoFirstNoteAvaliable(Credential credential)
+			throws IOException;
 	
-	public void insertEmptyTimeline(Credential credential,
-			String zipCode, String valuationHtml) throws IOException;
+	public void insertHasSameRateBefore(Credential credential)
+			throws IOException;
+
+	public void insertEmptyTimeline(Credential credential, String zipCode,
+			String valuationHtml) throws IOException;
 
 	public void insertBundleTimelines(Credential credential,
-			List<NoteBo> noteBoList, String bundleId, String valuationHtml) throws IOException;
+			List<NoteBo> noteBoList, String bundleId, String valuationHtml)
+			throws IOException;
 }

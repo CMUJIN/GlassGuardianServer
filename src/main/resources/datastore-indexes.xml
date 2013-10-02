@@ -19,4 +19,9 @@
         <property name="ADDRESS" direction="asc"/>
         <property name="ZIP_CODE" direction="desc"/>
     </datastore-index>
+    <datastore-index kind="RATE_RECORD" ancestor="false" source="manual">
+        <property name="LATITUDE" direction="asc"/>
+        <property name="LONGTITUDE" direction="asc"/>
+        <property name="USER_ID" direction="asc"/>
+    </datastore-index>
 </datastore-indexes>

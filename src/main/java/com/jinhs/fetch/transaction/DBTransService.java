@@ -20,6 +20,7 @@ import com.jinhs.fetch.bo.NoteBo;
 import com.jinhs.fetch.bo.ZoneRateBo;
 import com.jinhs.fetch.entity.NoteCacheEntity;
 import com.jinhs.fetch.entity.NoteEntity;
+import com.jinhs.fetch.entity.RateRecordEntity;
 import com.jinhs.fetch.entity.ZoneRateEntity;
 
 @Service
@@ -31,14 +32,31 @@ public class DBTransService {
 	EntityManager em;
 	
 	@Transactional(readOnly = true)
-	public List<NoteBo> fetchNotesByCoordinate(String userId, double latitude, double longtitude) throws PersistenceException{
+	public NoteBo fetchFirstNoteByCoordinate(double latitude, double longtitude) throws PersistenceException{
 		List<NoteEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from NoteEntity c where c.latitude=:latitude and c.longtitude=:longtitude and c.user_id=:userid");
+					"select c from NoteEntity c where c.latitude=:latitude and c.longtitude=:longtitude order by c.date desc");
 			query.setParameter("latitude", latitude);
 			query.setParameter("longtitude", longtitude);
-			query.setParameter("userid", userId);
+			query.setMaxResults(1);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
+			return null;
+		}
+		List<NoteBo> noteList = convertToNoteBoList(result);
+		return noteList.get(0);
+	}
+	
+	@Transactional(readOnly = true)
+	public List<NoteBo> fetchNotesByCoordinate(double latitude, double longtitude) throws PersistenceException{
+		List<NoteEntity> result;
+		try{
+			Query query = em.createQuery(
+					"select c from NoteEntity c where c.latitude=:latitude and c.longtitude=:longtitude order by c.date desc");
+			query.setParameter("latitude", latitude);
+			query.setParameter("longtitude", longtitude);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
 			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
@@ -68,13 +86,12 @@ public class DBTransService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<NoteBo> fetchNotesByAddress(String userId, String address) throws PersistenceException{
+	public List<NoteBo> fetchNotesByAddress(String address) throws PersistenceException{
 		List<NoteEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from NoteEntity c where c.address=:address and c.user_id=:userid");
+					"select c from NoteEntity c where c.address=:address and order by c.date desc");
 			query.setParameter("address", address);
-			query.setParameter("userid", userId);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
 			LOG.info("fetchNotesByAddress DB exception "+e.getMessage());
@@ -85,13 +102,12 @@ public class DBTransService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<NoteBo> fetchNotesByZip(String userId, String zipCode) throws PersistenceException{
+	public List<NoteBo> fetchNotesByZip(String zipCode) throws PersistenceException{
 		List<NoteEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from NoteEntity c where c.zip_code=:zipcode and c.user_id=:userid");
+					"select c from NoteEntity c where c.zip_code=:zipcode and order by c.date desc");
 			query.setParameter("zipcode", zipCode);
-			query.setParameter("userid", userId);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
 			LOG.info("fetchNotes DB exception "+e.getMessage());
@@ -272,6 +288,54 @@ public class DBTransService {
 				rateEntity.setDislike_hit(rateEntity.getDislike_hit()+1);
 		}
 		em.persist(rateEntity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+	
+	@Transactional(readOnly = true)
+	public int isRateBefore(String userId, double latitude, double longtitude) throws PersistenceException{
+		List<RateRecordEntity> result;
+		try{
+			Query query = em.createQuery(
+					"select c from RateRecordEntity c where c.latitude=:latitude and c.longtitude=:longtitude and userId=:userId");
+			query.setParameter("latitude", latitude);
+			query.setParameter("longtitude", longtitude);
+			query.setParameter("userId", userId);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("isRateBefore DB exception "+e.getMessage());
+			return 0;
+		}
+		if(result.isEmpty())
+			return 0;
+		return result.get(0).getRate();
+	}
+	
+	public void upsertRateRecord(String userId, double latitude, double longtitude, int rate) throws PersistenceException{
+		List<RateRecordEntity> result = null;
+		try{
+			Query query = em.createQuery(
+					"select c from RateRecordEntity c where c.latitude=:latitude and c.longtitude=:longtitude and userId=:userId");
+			query.setParameter("latitude", latitude);
+			query.setParameter("longtitude", longtitude);
+			query.setParameter("userId", userId);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("updateRateRecord DB exception "+e.getMessage());
+			return;
+		}
+		RateRecordEntity rateRecordEntity;
+		if(result==null||result.isEmpty()){
+			rateRecordEntity = new RateRecordEntity();
+			rateRecordEntity.setLatitude(latitude);
+			rateRecordEntity.setLongtitude(longtitude);
+			rateRecordEntity.setRate(rate);
+		}
+		else{
+			rateRecordEntity = result.get(0);
+			rateRecordEntity.setRate(rate);
+		}
+		em.persist(rateRecordEntity);
 		em.setFlushMode(FlushModeType.AUTO);
 		em.flush();
 	}

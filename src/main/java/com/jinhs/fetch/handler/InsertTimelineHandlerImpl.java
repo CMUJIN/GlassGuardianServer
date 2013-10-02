@@ -1,6 +1,7 @@
 package com.jinhs.fetch.handler;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.services.mirror.model.Attachment;
 import com.google.api.services.mirror.model.MenuItem;
 import com.google.api.services.mirror.model.TimelineItem;
 import com.jinhs.fetch.bo.NoteBo;
@@ -33,14 +35,22 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 			List<NoteBo> noteBoList, String bundleId) throws IOException {
 		
 		List<MenuItem> actionList = new ArrayList<MenuItem>();
-		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
 		TimelinePopulateHelper.addCustomMenuItemWithPayload(actionList, CustomActionConfigEnum.FETCH_MORE, bundleId);
+		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
 		
 		for (TimelineItem timelineItem : TimelinePopulateHelper
 				.populateBundleNotes(noteBoList,
 						mirrorClient.getMirror(credential), bundleId)) {
 			timelineItem.setMenuItems(actionList);
-			mirrorClient.insertTimelineItem(credential, timelineItem);
+			if(timelineItem.getAttachments()!=null){
+				Attachment attachment = timelineItem.getAttachments().get(0);
+				InputStream inputStream =
+						mirrorClient.getAttachmentInputStream(credential, timelineItem.getId(), attachment.getId());
+				mirrorClient.insertTimelineItem(credential, timelineItem, attachment.getContentType(), inputStream);
+			}
+			else{
+				mirrorClient.insertTimelineItem(credential, timelineItem);
+			}
 		}
 		LOG.info("insertBundleTimelines successfully, bundleId:"+bundleId);
 	}
@@ -48,11 +58,10 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 	@Override
 	public void insertNoMoreFetchAvaliable(Credential credential) throws IOException {
 		List<MenuItem> actionList = new ArrayList<MenuItem>();
-		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
 		TimelinePopulateHelper.addCustomMenuItem(actionList, CustomActionConfigEnum.PUSH);
+		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
 		String text = "No more notes avaliable";
-		TimelineItem timelineItem = mirrorUtil.populateTimeLine(text, actionList);
-		mirrorClient.insertTimelineItem(credential, timelineItem);
+		insertSingleTimeline(credential, text, actionList);
 		LOG.info("insertNoMoreFetchAvaliable successfully");
 	}
 
@@ -60,9 +69,8 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 	public void insertEmptyTimeline(Credential credential, String zipCode,
 			String valuationHtml) throws IOException {
 		List<MenuItem> actionList = new ArrayList<MenuItem>();
-		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
 		TimelinePopulateHelper.addCustomMenuItem(actionList, CustomActionConfigEnum.PUSH);
-		
+		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
 		TimelineItem itemCover = mirrorUtil.populateTimeLineWithHtml(valuationHtml, actionList);
 		mirrorClient.insertTimelineItem(credential, itemCover);
 		LOG.info("insertEmptyTimeline successfully");
@@ -84,6 +92,49 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 		itemCover.setBundleId(bundleId);
 		itemCover.setIsBundleCover(true);
 		mirrorClient.insertTimelineItem(credential, itemCover);
+	}
+
+	@Override
+	public void insertFetchFirst(Credential credential, NoteBo firstNote) throws IOException {
+		TimelineItem timelineItem = TimelinePopulateHelper.populateSingleNote(firstNote, mirrorClient.getMirror(credential));
+		List<MenuItem> actionList = new ArrayList<MenuItem>();
+		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
+		timelineItem.setMenuItems(actionList);
+		if(timelineItem.getAttachments()!=null){
+			Attachment attachment = timelineItem.getAttachments().get(0);
+			InputStream inputStream =
+					mirrorClient.getAttachmentInputStream(credential, timelineItem.getId(), attachment.getId());
+			mirrorClient.insertTimelineItem(credential, timelineItem, attachment.getContentType(), inputStream);
+		}
+		else{
+			mirrorClient.insertTimelineItem(credential, timelineItem);
+		}
+	}
+
+	@Override
+	public void insertNoFirstNoteAvaliable(Credential credential)
+			throws IOException {
+		List<MenuItem> actionList = new ArrayList<MenuItem>();
+		TimelinePopulateHelper.addCustomMenuItem(actionList, CustomActionConfigEnum.PUSH);
+		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
+		String text = "Be the first one to note";
+		insertSingleTimeline(credential, text, actionList);
+		LOG.info("insertNoFirstNoteAvaliable successfully");
+	}
+	
+	private void insertSingleTimeline(Credential credential, String text, List<MenuItem> actionList) throws IOException{
+		TimelineItem timelineItem = mirrorUtil.populateTimeLine(text, actionList);
+		mirrorClient.insertTimelineItem(credential, timelineItem);
+	}
+
+	@Override
+	public void insertHasSameRateBefore(Credential credential)
+			throws IOException {
+		List<MenuItem> actionList = new ArrayList<MenuItem>();
+		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
+		String text = "You have given same rate to this point before";
+		insertSingleTimeline(credential, text, actionList);
+		LOG.info("insertHasSameRateBefore successfully");
 	}
 
 }

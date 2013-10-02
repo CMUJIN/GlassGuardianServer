@@ -37,6 +37,18 @@ public class TimelinePopulateHelper {
 		return list;
 	}
 	
+	public static TimelineItem populateSingleNote(NoteBo note, Mirror mirrorService) throws IOException{
+		TimelineItem timelineItem =  mirrorService.timeline().get(note.getTimeline_id()).execute();
+		if(note.getAttachment_id()!=null){
+			Attachment attachment = mirrorService.timeline().attachments().get(note.getTimeline_id(), note.getAttachment_id()).execute();
+			List<Attachment> attList = new ArrayList<Attachment>();
+			attList.add(attachment);
+			timelineItem.setAttachments(attList);
+			LOG.info("insert attachment id:"+note.getAttachment_id());
+		}
+		return timelineItem;
+	}
+	
 	public static void addMenuItem(List<MenuItem> menuItemList, MenuItemActionEnum action) {
 		menuItemList.add(new MenuItem().setAction(action.getValue()));
 	}

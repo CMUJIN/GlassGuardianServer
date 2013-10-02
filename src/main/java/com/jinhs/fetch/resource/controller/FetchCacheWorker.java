@@ -1,13 +1,11 @@
 package com.jinhs.fetch.resource.controller;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,19 +47,17 @@ public class FetchCacheWorker {
 		FetchCacheTaskPayload taskPayload =  new Gson().fromJson(payload, FetchCacheTaskPayload.class);
 		List<NoteBo> firstGroupList = taskPayload.getFirstGroupNotes();
 		LocationBo location = taskPayload.getLocation();
-		String userToken = taskPayload.getUserToken();
 		
 		List<NoteBo> noteListByCoordinate = null;
 		List<NoteBo> noteListByAddress = null;
 		List<NoteBo> noteListByZip = null;
-		noteListByCoordinate = transService.fetchNotesByCoordinate(userToken,
-				location.getLatitude(), location.getLongitude());
+		noteListByCoordinate = transService.fetchNotesByCoordinate(location.getLatitude(), location.getLongitude());
 
 		if(location.getAddress()!=null)
-			noteListByAddress = transService.fetchNotesByAddress(userToken, location.getAddress());
+			noteListByAddress = transService.fetchNotesByAddress(location.getAddress());
 		
 		if(location.getZipCode()!=null)
-			noteListByZip =  transService.fetchNotesByZip(userToken, location.getZipCode());
+			noteListByZip =  transService.fetchNotesByZip(location.getZipCode());
 		
 		// insert note into cache today for fetch more operation
 		LinkedList<CacheNoteBo> cacheList = populateCacheList(firstGroupList,

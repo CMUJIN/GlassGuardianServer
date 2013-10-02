@@ -33,6 +33,9 @@ public class DislikeHandlerImpl implements DislikeHandler {
 	@Autowired
 	GeoCodingHelper geoCodingHelper;
 	
+	@Autowired
+	InsertTimelineHandler insertTimelineHandler;
+	
 	@Override
 	public void dislike(Notification notification, Credential credential) throws IOException {
 		LOG.info("Dislike operation");
@@ -41,10 +44,14 @@ public class DislikeHandlerImpl implements DislikeHandler {
 			LOG.info("Location load failed");
 			throw new IOException();
 		}
-		/*NoteBo noteBo = noteBoHelper.populateDislikeNoteBo(notification, credential,location);
-		transService.insertNote(noteBo);
-		*/
-		updateZoneRate(location, false);
+		int isRateBefore = transService.isRateBefore(notification.getUserToken(), location.getLatitude(), location.getLongitude());
+		if(isRateBefore!=-1){
+			transService.upsertRateRecord(notification.getUserToken(), location.getLatitude(), location.getLongitude(), -1);
+			updateZoneRate(location, false);
+		}
+		else{
+			insertTimelineHandler.insertHasSameRateBefore(credential);
+		}
 		LOG.info("Dislike Successfully");
 	}
 

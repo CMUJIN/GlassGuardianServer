@@ -86,6 +86,7 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 		TimelinePopulateHelper.addCustomMenuItem(menuItemList, CustomActionConfigEnum.PUSH);
 		TimelinePopulateHelper.addCustomMenuItem(menuItemList, CustomActionConfigEnum.LIKE);
 		TimelinePopulateHelper.addCustomMenuItem(menuItemList, CustomActionConfigEnum.DISLIKE);
+		TimelinePopulateHelper.addCustomMenuItem(menuItemList, CustomActionConfigEnum.FETCH_FIRST);
 		TimelinePopulateHelper.addMenuItem(menuItemList, MenuItemActionEnum.TOGGLE_PINNED);
 		TimelineItem timelineItem = mirrorUtil.populateTimeLine(
 				"Welcome to Fetch Pin this timeline", menuItemList);

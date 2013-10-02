@@ -1,7 +1,6 @@
 package com.jinhs.fetch.resource.controller;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -19,6 +18,7 @@ import com.google.api.services.mirror.model.Notification;
 import com.google.gson.Gson;
 import com.jinhs.fetch.handler.DeleteHandler;
 import com.jinhs.fetch.handler.DislikeHandler;
+import com.jinhs.fetch.handler.FetchFirstHandler;
 import com.jinhs.fetch.handler.FetchHandler;
 import com.jinhs.fetch.handler.FetchMoreHandler;
 import com.jinhs.fetch.handler.LikeHandler;
@@ -53,6 +53,9 @@ public class NotificationWorker {
 	
 	@Autowired
 	FetchMoreHandler fetchMoreHandler;
+	
+	@Autowired
+	FetchFirstHandler fetchFirstHandler;
 
 	/*
 	 * @RequestMapping("/get",method = RequestMethod.GET) public void
@@ -119,41 +122,16 @@ public class NotificationWorker {
 				dislikeHandler.dislike(request, credential);
 				return;
 			}
+			else if(actionPayload.equals(CustomActionConfigEnum.FETCH_FIRST.getName())){
+				fetchFirstHandler.fetchFirst(request, credential);
+				return;
+			}
 
 			if(actionPayload.startsWith(CustomActionConfigEnum.FETCH_MORE.getName())){
 				fetchMoreHandler.fetchMore(actionPayload, credential);
 				return;
 			}
+			
 		}
-		
-		
-		/*if (request.getUserActions().contains(
-				new UserAction().setType(MenuItemActionEnum.CUSTOM.getValue())
-						.setPayload(CustomActionConfigEnum.FETCH.getName()))) {
-			fetchHandler.fetch(request, credential);
-		} else if (request.getUserActions().contains(
-				new UserAction().setType(MenuItemActionEnum.CUSTOM.getValue())
-					.setPayload(CustomActionConfigEnum.FETCH.getName()))) {
-			// TODO add further more
-		} else if (request.getUserActions().contains(
-				new UserAction().setType(MenuItemActionEnum.REPLY.getValue()))) {
-			pushHandler.push(request, credential);
-		} else if (request.getUserActions().contains(
-				new UserAction().setType(MenuItemActionEnum.CUSTOM.getValue())
-						.setPayload(CustomActionConfigEnum.LIKE.getName()))) {
-			likeHandler.like(request, credential);
-		} else if (request.getUserActions().contains(
-				new UserAction().setType(MenuItemActionEnum.CUSTOM.getValue())
-						.setPayload(CustomActionConfigEnum.DISLIKE.getName()))) {
-			dislikeHandler.dislike(request, credential);
-		} else if (request.getUserActions().contains(
-				new UserAction().setType(MenuItemActionEnum.DELETE.getValue()))) {
-			deleteHandler.delete(request, credential);
-		} else if (request.getUserActions().contains(
-				new UserAction().setType(MenuItemActionEnum.TOGGLE_PINNED.getValue()))) {
-			// PIN action
-		} else{//SHARE
-			pushHandler.push(request, credential);
-		}*/
 	}
 }

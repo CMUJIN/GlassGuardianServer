@@ -9,6 +9,7 @@
          <class>com.jinhs.fetch.entity.NoteEntity</class>
          <class>com.jinhs.fetch.entity.NoteCacheEntity</class>
          <class>com.jinhs.fetch.entity.ZoneRateEntity</class>
+         <class>com.jinhs.fetch.entity.RateRecordEntity</class>
         <properties>
             <property name="datanucleus.NontransactionalRead" value="true"/>
             <property name="datanucleus.NontransactionalWrite" value="true"/>

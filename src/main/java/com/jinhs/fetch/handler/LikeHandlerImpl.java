@@ -33,6 +33,8 @@ public class LikeHandlerImpl implements LikeHandler{
 	@Autowired
 	GeoCodingHelper geoCodingHelper;
 	
+	@Autowired
+	InsertTimelineHandler insertTimelineHandler;
 	
 	@Override
 	public void like(Notification notification, Credential credential) throws IOException {
@@ -42,11 +44,14 @@ public class LikeHandlerImpl implements LikeHandler{
 			LOG.info("Location load failed");
 			throw new IOException();
 		}
-		/*NoteBo noteBo = noteBoHelper.populateLikeNoteBo(notification, credential, location);
-		transService.insertNote(noteBo);*/
-		
-		updateZoneRate(location, false);
-
+		int isRateBefore = transService.isRateBefore(notification.getUserToken(), location.getLatitude(), location.getLongitude());
+		if(isRateBefore!=1){
+			transService.upsertRateRecord(notification.getUserToken(), location.getLatitude(), location.getLongitude(), 1);
+			updateZoneRate(location, false);
+		}
+		else{
+			insertTimelineHandler.insertHasSameRateBefore(credential);
+		}
 		LOG.info("Like Successfully");
 	}
 

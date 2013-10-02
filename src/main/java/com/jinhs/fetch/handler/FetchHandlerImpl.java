@@ -115,12 +115,12 @@ public class FetchHandlerImpl implements FetchHandler {
 		}
 		if(rateByAddress>=0){
 			sb.append("<li>");
-			sb.append("rateByAddress+% People Like This Address");
+			sb.append(rateByAddress+"% People Like This Address");
 			sb.append("</li>");
 		}
 		if(rateByZip>=0){
 			sb.append("<li>");
-			sb.append(rateByAddress+"% People Like This Area");
+			sb.append(rateByZip+"% People Like This Area");
 			sb.append("</li>");
 		}
 		if(!hasExistedNotes){
