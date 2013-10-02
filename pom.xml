@@ -12,7 +12,8 @@
 	<properties>
 		<appengine.app.version>1</appengine.app.version>
 		<appengine.target.version>1.7.7</appengine.target.version>
-		<gaePluginVersion>0.9.2</gaePluginVersion>
+		<appengine.runtime.version>1.7.7.1</appengine.runtime.version>
+		<gaePluginVersion>0.9.6</gaePluginVersion>
 		<gae.port>8080</gae.port>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.0.RELEASE</spring.version>
@@ -148,17 +149,6 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
 			<version>${spring.security.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-core-asl</artifactId>
-			<version>1.8.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.8.4</version>
 		</dependency>
 
 		<!-- Restful service -->

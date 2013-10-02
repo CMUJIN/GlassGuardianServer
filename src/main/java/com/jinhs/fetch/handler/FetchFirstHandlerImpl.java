@@ -23,16 +23,7 @@ public class FetchFirstHandlerImpl implements FetchFirstHandler {
 	DBTransService transService;
 	
 	@Autowired
-	DataProcessHelper dataProcessHelper;
-	
-	@Autowired
 	MirrorClient mirrorClient;
-	
-	@Autowired
-	GeoCodingHelper geoCodingHelper;
-	
-	@Autowired
-	ZoneRateHandler zoneRateHandler;
 	
 	@Autowired
 	InsertTimelineHandler insertTimelineHandler;
@@ -48,10 +39,14 @@ public class FetchFirstHandlerImpl implements FetchFirstHandler {
 		}
 		
 		NoteBo firstNote = transService.fetchFirstNoteByCoordinate(location.getLatitude(), location.getLongitude());
-		if(firstNote!=null)
+		if(firstNote!=null){
 			insertTimelineHandler.insertFetchFirst(credential, firstNote);
-		else
+			LOG.info("Fetch First note, timeline id:"+firstNote.getTimeline_id());
+		}
+		else{
 			insertTimelineHandler.insertNoFirstNoteAvaliable(credential);
+			LOG.info("No note avaliable");
+		}
 		LOG.info("Fetch First finish");
 	}
 

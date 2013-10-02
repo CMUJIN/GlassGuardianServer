@@ -2,6 +2,7 @@ package com.jinhs.fetch.transaction;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -90,7 +91,7 @@ public class DBTransService {
 		List<NoteEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from NoteEntity c where c.address=:address and order by c.date desc");
+					"select c from NoteEntity c where c.address=:address order by c.date desc");
 			query.setParameter("address", address);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
@@ -106,7 +107,7 @@ public class DBTransService {
 		List<NoteEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from NoteEntity c where c.zip_code=:zipcode and order by c.date desc");
+					"select c from NoteEntity c where c.zip_code=:zipcode order by c.date desc");
 			query.setParameter("zipcode", zipCode);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
@@ -297,7 +298,7 @@ public class DBTransService {
 		List<RateRecordEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from RateRecordEntity c where c.latitude=:latitude and c.longtitude=:longtitude and userId=:userId");
+					"select c from RateRecordEntity c where c.latitude=:latitude and c.longtitude=:longtitude and c.user_id=:userId");
 			query.setParameter("latitude", latitude);
 			query.setParameter("longtitude", longtitude);
 			query.setParameter("userId", userId);
@@ -315,7 +316,7 @@ public class DBTransService {
 		List<RateRecordEntity> result = null;
 		try{
 			Query query = em.createQuery(
-					"select c from RateRecordEntity c where c.latitude=:latitude and c.longtitude=:longtitude and userId=:userId");
+					"select c from RateRecordEntity c where c.latitude=:latitude and c.longtitude=:longtitude and c.user_id=:userId");
 			query.setParameter("latitude", latitude);
 			query.setParameter("longtitude", longtitude);
 			query.setParameter("userId", userId);
@@ -327,15 +328,18 @@ public class DBTransService {
 		RateRecordEntity rateRecordEntity;
 		if(result==null||result.isEmpty()){
 			rateRecordEntity = new RateRecordEntity();
+			rateRecordEntity.setUser_id(userId);
 			rateRecordEntity.setLatitude(latitude);
 			rateRecordEntity.setLongtitude(longtitude);
 			rateRecordEntity.setRate(rate);
+			rateRecordEntity.setDate(new Date());
+			em.persist(rateRecordEntity);
 		}
 		else{
 			rateRecordEntity = result.get(0);
 			rateRecordEntity.setRate(rate);
+			em.merge(rateRecordEntity);
 		}
-		em.persist(rateRecordEntity);
 		em.setFlushMode(FlushModeType.AUTO);
 		em.flush();
 	}

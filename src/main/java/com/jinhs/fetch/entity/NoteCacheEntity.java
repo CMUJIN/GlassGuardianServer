@@ -23,7 +23,6 @@ public class NoteCacheEntity {
 	@Column(name="IDENTITY_KEY")
 	private String identity_key;
 	
-	@NotNull
 	@Column(name="USER_ID")
 	private String user_id;
 	

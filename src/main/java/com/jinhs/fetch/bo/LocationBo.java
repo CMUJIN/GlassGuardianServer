@@ -1,9 +1,5 @@
 package com.jinhs.fetch.bo;
 
-import java.util.Date;
-
-
-
 public class LocationBo {
 	
 	private double latitude;

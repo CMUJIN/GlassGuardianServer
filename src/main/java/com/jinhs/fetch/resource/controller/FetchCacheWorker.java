@@ -79,7 +79,7 @@ public class FetchCacheWorker {
 
 	private void processCacheNoteBoList(List<NoteBo> noteList,
 			LinkedList<CacheNoteBo> cacheList, HashSet<String> set) {
-		if(noteList.isEmpty())
+		if(noteList==null||noteList.size()==0)
 			return;
 		for (NoteBo note : noteList) {
 			String identity_key = BundleIdProcessHelper.generateIdentityKey(note);
