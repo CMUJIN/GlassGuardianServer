@@ -3,7 +3,6 @@ package com.jinhs.fetch.handler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.util.DateTime;
 import com.google.api.services.mirror.model.Attachment;
 import com.google.api.services.mirror.model.MenuItem;
 import com.google.api.services.mirror.model.NotificationConfig;
@@ -45,15 +43,12 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 		for (TimelineItem timelineItem : TimelinePopulateHelper
 				.populateBundleNotes(noteBoList,
 						mirrorClient.getMirror(credential), bundleId)) {
-			if(isFirstAsCover){
-				timelineItem.setIsBundleCover(true);
-				timelineItem.setNotification(new NotificationConfig().setLevel(NotificationLevelEnum.Default.getValue()));
-				isFirstAsCover=false;
-			}
+			timelineItem.setNotification(new NotificationConfig().setLevel(NotificationLevelEnum.Default.getValue()));
 			timelineItem.setMenuItems(actionList);
 			if(timelineItem.getAttachments()!=null){
-				LOG.info("has attachment");
+				
 				Attachment attachment = timelineItem.getAttachments().get(0);
+				LOG.info("has attachment " +attachment.getContentUrl().toString());
 				InputStream inputStream =
 						mirrorClient.getAttachmentInputStream(credential, timelineItem.getId(), attachment.getId());
 				mirrorClient.insertTimelineItem(credential, timelineItem, attachment.getContentType(), inputStream);

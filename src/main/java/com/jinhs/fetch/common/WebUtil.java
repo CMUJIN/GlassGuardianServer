@@ -21,11 +21,11 @@ public class WebUtil {
 	}
 	
 	public static String buildWelcomeImageUrl(){
-		return RESOURCEHOST+"/static/images/chipotle-tube-640x360.jpg";
+		return RESOURCEHOST+"/static/images/welcome_bg.jpg";
 	}
 	
 	public static String buildContactImageUrl(){
-		return RESOURCEHOST+"/static/images/chipotle-tube-640x360.jpg";
+		return RESOURCEHOST+"/static/images/welcome_bg.jpg";
 	}
 	
 	public static String buildNotifyWorkerUrl(){
@@ -33,7 +33,7 @@ public class WebUtil {
 	}
 	
 	public static String buildHomeBackgroundImageUrl(){
-		return RESOURCEHOST+"/static/images/home_bg.jpg";
+		return RESOURCEHOST+"/static/images/welcome_bg.jpg";
 	}
 	
 }

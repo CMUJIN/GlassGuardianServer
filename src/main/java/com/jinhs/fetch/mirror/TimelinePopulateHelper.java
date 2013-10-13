@@ -34,6 +34,7 @@ public class TimelinePopulateHelper {
 		TimelineItem item =  mirrorService.timeline().get(note.getTimeline_id()).execute();
 		LOG.info("single note timeline id:"+item.getId());
 		TimelineItem timelineItem = new TimelineItem();
+		timelineItem.setId(note.getTimeline_id());
 		timelineItem.setTitle(item.getTitle());
 		timelineItem.setText(item.getText());
 		timelineItem.setHtml(item.getHtml());

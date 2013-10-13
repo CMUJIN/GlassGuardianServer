@@ -15,7 +15,10 @@
  */
 package com.jinhs.fetch.mirror;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,9 +95,23 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 				"Fetch & Leave Footprints", menuItemList);
 		
 		URL url = new URL(WebUtil.buildHomeBackgroundImageUrl());
+		InputStream attachment =  url.openStream();
 		mirrorClient.insertTimelineItem(credential,
-				timelineItem, "image/jpeg", url.openStream());
+				timelineItem, "image/jpeg", attachment);
+		/*mirrorClient.insertTimelineItem(credential,
+				timelineItem);*/
 		LOG.info("Bootstrapper inserted welcome message "
 				+ timelineItem.getId() + " for user " + userId);
 	}
+	
+	/*public static void main(String args[]){
+		try {
+			InputStream attachment =  new FileInputStream("/static/images/home_bg.jpg");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("fail");
+		}
+		System.out.println("ok");
+	}*/
 }

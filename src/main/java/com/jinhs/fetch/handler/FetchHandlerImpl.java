@@ -109,35 +109,40 @@ public class FetchHandlerImpl implements FetchHandler {
 		int rateByCoordinate = zoneRateHandler.getRateByCoordiate(latitude, longtitude);
 		int rateByAddress = zoneRateHandler.getRateByAddress(address);
 		int rateByZip = zoneRateHandler.getRateByZip(zip_code);
-		StringBuffer sb = new StringBuffer();
-		sb.append("<article class=\"auto-paginate\">");
-		sb.append("<ul>");
-		if(rateByCoordinate>=0){
-			sb.append("<li>");
-			sb.append(rateByCoordinate+"% People Like This Point");
-			sb.append("</li>");
-		}
-		if(rateByAddress>=0){
-			sb.append("<li>");
-			sb.append(rateByAddress+"% People Like This Address");
-			sb.append("</li>");
-		}
-		if(rateByZip>=0){
-			sb.append("<li>");
-			sb.append(rateByZip+"% People Like This Area");
-			sb.append("</li>");
-		}
-		if(!hasExistedNotes){
-			sb.append("<p>");
-			sb.append("No meesages avaliable");
-			sb.append("</p>");
-			sb.append("<p>");
-			sb.append("Be the first guy to leave the message");
-			sb.append("</p>");
-		}
 		
-		sb.append("</ul>");
-		sb.append("</article>");
+		String coorLikeLevel = getColorLevel(rateByCoordinate);
+		String zipLikeLevel = getColorLevel(rateByZip);
+
+		LOG.info("coorLikeLevel:"+coorLikeLevel+" zipLikeLevel"+zipLikeLevel);
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append("<article><figure>");
+		sb.append("<img src=\"");
+		sb.append("glass://map?w=240&h=360&marker=0;37.3471,-121.9312");
+		sb.append("\" height=\"360\" width=\"240\">");
+		sb.append("</figure><section><div class=\"text-auto-size\">");
+		sb.append("<p class=\"");
+		sb.append(coorLikeLevel);
+		sb.append("\">");
+		sb.append(rateByCoordinate+"% like this place");
+		sb.append("</p><p class=\"");
+		sb.append(zipLikeLevel);
+		sb.append("\">");
+		sb.append(rateByZip+"% like this area");
+		sb.append("</p>");
+		sb.append("</div></section></article>");
+		
 		return sb.toString();
+	}
+
+	private String getColorLevel(int rate) {
+		if(rate>=0&&rate<50)
+			return "red";
+		else if(rate>=50&&rate<80)
+			return "yellow";
+		else if(rate>=80&&rate<=100)
+			return "green";
+		else 
+			return "white";
 	}
 }
