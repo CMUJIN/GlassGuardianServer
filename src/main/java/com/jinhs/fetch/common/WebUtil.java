@@ -31,4 +31,9 @@ public class WebUtil {
 	public static String buildNotifyWorkerUrl(){
 		return "http://localhost:8080/api/worker";
 	}
+	
+	public static String buildHomeBackgroundImageUrl(){
+		return RESOURCEHOST+"/static/images/home_bg.jpg";
+	}
+	
 }

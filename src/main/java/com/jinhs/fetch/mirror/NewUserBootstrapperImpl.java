@@ -16,6 +16,7 @@
 package com.jinhs.fetch.mirror;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,6 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.mirror.model.Contact;
 import com.google.api.services.mirror.model.MenuItem;
-import com.google.api.services.mirror.model.MenuValue;
 import com.google.api.services.mirror.model.Subscription;
 import com.google.api.services.mirror.model.TimelineItem;
 import com.jinhs.fetch.common.WebUtil;
@@ -89,10 +89,12 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 		TimelinePopulateHelper.addCustomMenuItem(menuItemList, CustomActionConfigEnum.FETCH_FIRST);
 		TimelinePopulateHelper.addMenuItem(menuItemList, MenuItemActionEnum.TOGGLE_PINNED);
 		TimelineItem timelineItem = mirrorUtil.populateTimeLine(
-				"Welcome to Fetch Pin this timeline", menuItemList);
-		TimelineItem insertedItem = mirrorClient.insertTimelineItem(credential,
-				timelineItem);
+				"Fetch & Leave Footprints", menuItemList);
+		
+		URL url = new URL(WebUtil.buildHomeBackgroundImageUrl());
+		mirrorClient.insertTimelineItem(credential,
+				timelineItem, "image/jpeg", url.openStream());
 		LOG.info("Bootstrapper inserted welcome message "
-				+ insertedItem.getId() + " for user " + userId);
+				+ timelineItem.getId() + " for user " + userId);
 	}
 }

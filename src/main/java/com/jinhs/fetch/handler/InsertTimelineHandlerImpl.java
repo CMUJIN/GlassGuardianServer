@@ -110,26 +110,10 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 	@Override
 	public void insertFetchFirst(Credential credential, NoteBo firstNote) throws IOException {
 		TimelineItem timelineItem = TimelinePopulateHelper.populateSingleNote(firstNote, mirrorClient.getMirror(credential));
-		
-		/*TimelineItem timelineItem = new TimelineItem();
-		timelineItem.setTitle(item.getTitle());
-		timelineItem.setText(item.getText());
-		timelineItem.setAttachments(item.getAttachments());*/
 		List<MenuItem> actionList = new ArrayList<MenuItem>();
 		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
 		timelineItem.setMenuItems(actionList);
 		timelineItem.setNotification(new NotificationConfig().setLevel(NotificationLevelEnum.Default.getValue()));
-		/*if(timelineItem.getAttachments()!=null){
-			LOG.info("insert first with attachment");
-			Attachment attachment = timelineItem.getAttachments().get(0);
-			InputStream inputStream =
-					mirrorClient.getAttachmentInputStream(credential, timelineItem.getId(), attachment.getId());
-			mirrorClient.insertTimelineItem(credential, timelineItem, attachment.getContentType(), inputStream);
-		}
-		else{
-			LOG.info("insert first timeline");
-			mirrorClient.insertTimelineItem(credential, timelineItem);
-		}*/
 		mirrorClient.insertTimelineItem(credential, timelineItem);
 	}
 

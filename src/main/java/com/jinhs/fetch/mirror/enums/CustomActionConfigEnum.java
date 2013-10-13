@@ -8,35 +8,11 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
+			return "https://glassfetch.appspot.com/static/images/action_fetch.png";
 		}
 
 		public String getType() {
 			return MenuItemActionEnum.CUSTOM.getValue();
-		}
-
-		public boolean hasPending() {
-			return false;
-		}
-
-		public boolean hasComplete() {
-			return false;
-		}
-
-		public String getPendingName() {
-			return "Pending";
-		}
-
-		public String getCompleteName() {
-			return "Complete";
-		}
-
-		public String getPendingIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
-		}
-
-		public String getCompleteIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
 		}
 	},
 	
@@ -46,35 +22,11 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
+			return "https://glassfetch.appspot.com/static/images/action_more.png";
 		}
 
 		public String getType() {
 			return MenuItemActionEnum.CUSTOM.getValue();
-		}
-
-		public boolean hasPending() {
-			return false;
-		}
-
-		public boolean hasComplete() {
-			return false;
-		}
-
-		public String getPendingName() {
-			return "Pending";
-		}
-
-		public String getCompleteName() {
-			return "Complete";
-		}
-
-		public String getPendingIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
-		}
-
-		public String getCompleteIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
 		}
 	},
 	
@@ -84,35 +36,11 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
+			return "https://glassfetch.appspot.com/static/images/action_first.png";
 		}
 
 		public String getType() {
 			return MenuItemActionEnum.CUSTOM.getValue();
-		}
-
-		public boolean hasPending() {
-			return false;
-		}
-
-		public boolean hasComplete() {
-			return false;
-		}
-
-		public String getPendingName() {
-			return "Pending";
-		}
-
-		public String getCompleteName() {
-			return "Complete";
-		}
-
-		public String getPendingIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
-		}
-
-		public String getCompleteIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
 		}
 	},
 
@@ -122,35 +50,11 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
+			return "https://glassfetch.appspot.com/static/images/action_push.png";
 		}
 
 		public String getType() {
 			return MenuItemActionEnum.REPLY.getValue();
-		}
-
-		public boolean hasPending() {
-			return false;
-		}
-
-		public boolean hasComplete() {
-			return false;
-		}
-
-		public String getPendingName() {
-			return "Pending";
-		}
-
-		public String getCompleteName() {
-			return "Complete";
-		}
-
-		public String getPendingIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
-		}
-
-		public String getCompleteIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
 		}
 	},
 
@@ -160,35 +64,11 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
+			return "https://glassfetch.appspot.com/static/images/action_like.png";
 		}
 
 		public String getType() {
 			return MenuItemActionEnum.CUSTOM.getValue();
-		}
-
-		public boolean hasPending() {
-			return true;
-		}
-
-		public boolean hasComplete() {
-			return true;
-		}
-
-		public String getPendingName() {
-			return "Pending";
-		}
-
-		public String getCompleteName() {
-			return "Complete";
-		}
-
-		public String getPendingIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
-		}
-
-		public String getCompleteIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
 		}
 	},
 
@@ -198,43 +78,15 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
+			return "https://glassfetch.appspot.com/static/images/action_dislike.png";
 		}
 
 		public String getType() {
 			return MenuItemActionEnum.CUSTOM.getValue();
 		}
-
-		public boolean hasPending() {
-			return true;
-		}
-
-		public boolean hasComplete() {
-			return true;
-		}
-
-		public String getPendingName() {
-			return "Pending";
-		}
-
-		public String getCompleteName() {
-			return "Complete";
-		}
-
-		public String getPendingIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
-		}
-
-		public String getCompleteIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/chipotle-tube-640x360.jpg";
-		}
 	};
 
 	public String getName() {
-		return "";
-	}
-
-	public String getPendingName() {
 		return "";
 	}
 
@@ -246,23 +98,7 @@ public enum CustomActionConfigEnum {
 		return "";
 	}
 
-	public String getPendingIconUrl() {
-		return "";
-	}
-
-	public String getCompleteIconUrl() {
-		return "";
-	}
-
 	public String getType() {
 		return "";
-	}
-
-	public boolean hasPending() {
-		return false;
-	}
-
-	public boolean hasComplete() {
-		return false;
 	}
 }

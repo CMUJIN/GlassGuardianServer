@@ -22,16 +22,8 @@ public class TimelinePopulateHelper {
 		LOG.info("populate bundle timelines");
 		List<TimelineItem> list = new ArrayList<TimelineItem>();
 		for(NoteBo note:notes){
-			//TimelineItem timelineItem =  mirrorService.timeline().get(note.getTimeline_id()).execute();
 			TimelineItem timelineItem = populateSingleNote(note, mirrorService);
 			timelineItem.setBundleId(bundleId);
-			/*if(note.getAttachment_id()!=null){
-				Attachment attachment = mirrorService.timeline().attachments().get(note.getTimeline_id(), note.getAttachment_id()).execute();
-				List<Attachment> attList = new ArrayList<Attachment>();
-				attList.add(attachment);
-				timelineItem.setAttachments(attList);
-				LOG.info("insert attachment id:"+note.getAttachment_id());
-			}*/
 			list.add(timelineItem);
 		}
 		
@@ -55,13 +47,6 @@ public class TimelinePopulateHelper {
 				LOG.info("insert attachment id:"+note.getAttachment_id());
 			}
 		}
-		/*if(note.getAttachment_id()!=null){
-			Attachment attachment = mirrorService.timeline().attachments().get(note.getTimeline_id(), note.getAttachment_id()).execute();
-			List<Attachment> attList = new ArrayList<Attachment>();
-			attList.add(attachment);
-			timelineItem.setAttachments(attList);
-			LOG.info("insert attachment id:"+note.getAttachment_id());
-		}*/
 		return timelineItem;
 	}
 	
@@ -91,22 +76,6 @@ public class TimelinePopulateHelper {
 		defaultValue.setState("DEFAULT");
 		defaultValue.setIconUrl(config.getIconUrl());
 		menuValues.add(defaultValue);
-
-		if (config.hasPending()) {
-			MenuValue pendingValue = new MenuValue();
-			pendingValue.setDisplayName(config.getPendingName());
-			pendingValue.setState("PENDING");
-			pendingValue.setIconUrl(config.getPendingIconUrl());
-			menuValues.add(defaultValue);
-		}
-
-		if (config.hasComplete()) {
-			MenuValue completeValue = new MenuValue();
-			completeValue.setDisplayName(config.getCompleteName());
-			completeValue.setState("COMPLETE");
-			completeValue.setIconUrl(config.getCompleteIconUrl());
-			menuValues.add(defaultValue);
-		}
 		return menuValues;
 	}
 }
