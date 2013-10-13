@@ -22,15 +22,16 @@ public class TimelinePopulateHelper {
 		LOG.info("populate bundle timelines");
 		List<TimelineItem> list = new ArrayList<TimelineItem>();
 		for(NoteBo note:notes){
-			TimelineItem timelineItem =  mirrorService.timeline().get(note.getTimeline_id()).execute();
+			//TimelineItem timelineItem =  mirrorService.timeline().get(note.getTimeline_id()).execute();
+			TimelineItem timelineItem = populateSingleNote(note, mirrorService);
 			timelineItem.setBundleId(bundleId);
-			if(note.getAttachment_id()!=null){
+			/*if(note.getAttachment_id()!=null){
 				Attachment attachment = mirrorService.timeline().attachments().get(note.getTimeline_id(), note.getAttachment_id()).execute();
 				List<Attachment> attList = new ArrayList<Attachment>();
 				attList.add(attachment);
 				timelineItem.setAttachments(attList);
 				LOG.info("insert attachment id:"+note.getAttachment_id());
-			}
+			}*/
 			list.add(timelineItem);
 		}
 		
@@ -38,14 +39,29 @@ public class TimelinePopulateHelper {
 	}
 	
 	public static TimelineItem populateSingleNote(NoteBo note, Mirror mirrorService) throws IOException{
-		TimelineItem timelineItem =  mirrorService.timeline().get(note.getTimeline_id()).execute();
-		if(note.getAttachment_id()!=null){
+		TimelineItem item =  mirrorService.timeline().get(note.getTimeline_id()).execute();
+		LOG.info("single note timeline id:"+item.getId());
+		TimelineItem timelineItem = new TimelineItem();
+		timelineItem.setTitle(item.getTitle());
+		timelineItem.setText(item.getText());
+		timelineItem.setHtml(item.getHtml());
+		timelineItem.setSpeakableText(item.getSpeakableText());
+		if(item.getAttachments()!=null && item.getAttachments().size()!=0){
+			List<Attachment> attList = new ArrayList<Attachment>();
+			for(Attachment attch: item.getAttachments()){
+				Attachment attachment = mirrorService.timeline().attachments().get(item.getId(), attch.getId()).execute();	
+				attList.add(attachment);
+				timelineItem.setAttachments(attList);
+				LOG.info("insert attachment id:"+note.getAttachment_id());
+			}
+		}
+		/*if(note.getAttachment_id()!=null){
 			Attachment attachment = mirrorService.timeline().attachments().get(note.getTimeline_id(), note.getAttachment_id()).execute();
 			List<Attachment> attList = new ArrayList<Attachment>();
 			attList.add(attachment);
 			timelineItem.setAttachments(attList);
 			LOG.info("insert attachment id:"+note.getAttachment_id());
-		}
+		}*/
 		return timelineItem;
 	}
 	

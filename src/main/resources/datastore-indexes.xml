@@ -9,6 +9,11 @@
     <datastore-index kind="NOTES" ancestor="false" source="manual">
         <property name="LATITUDE" direction="asc"/>
         <property name="LONGTITUDE" direction="asc"/>
+        <property name="DATE" direction="asc"/>
+    </datastore-index>
+    <datastore-index kind="NOTES" ancestor="false" source="manual">
+        <property name="LATITUDE" direction="asc"/>
+        <property name="LONGTITUDE" direction="asc"/>
         <property name="DATE" direction="desc"/>
     </datastore-index>
     <datastore-index kind="NOTES" ancestor="false" source="manual">

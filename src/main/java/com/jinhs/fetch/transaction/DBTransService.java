@@ -37,7 +37,7 @@ public class DBTransService {
 		List<NoteEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from NoteEntity c where c.latitude=:latitude and c.longtitude=:longtitude order by c.date desc");
+					"select c from NoteEntity c where c.latitude=:latitude and c.longtitude=:longtitude order by c.date asc");
 			query.setParameter("latitude", latitude);
 			query.setParameter("longtitude", longtitude);
 			query.setMaxResults(1);
@@ -46,6 +46,8 @@ public class DBTransService {
 			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
 			return null;
 		}
+		if(result==null||result.size()==0)
+			return null;
 		List<NoteBo> noteList = convertToNoteBoList(result);
 		return noteList.get(0);
 	}
@@ -195,6 +197,40 @@ public class DBTransService {
 		return convertToZoneRateBo(result.get(0));
 	}
 
+	public void addRateByCoordinate(double latitude, double longtitude, boolean isLike) throws PersistenceException{
+		List<ZoneRateEntity> result = null;
+		try{
+			Query query = em.createQuery(
+					"select c from ZoneRateEntity c where c.latitude=:latitude and c.longtitude=:longtitude");
+			query.setParameter("latitude", latitude);
+			query.setParameter("longtitude", longtitude);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
+			return;
+		}
+		ZoneRateEntity rateEntity;
+		if(result==null||result.isEmpty()){
+			rateEntity = new ZoneRateEntity();
+			rateEntity.setLatitude(latitude);
+			rateEntity.setLongtitude(longtitude);
+			if(isLike)
+				rateEntity.setLike_hit(1);
+			else
+				rateEntity.setDislike_hit(1);
+		}
+		else{
+			rateEntity = result.get(0);
+			if(isLike)
+				rateEntity.setLike_hit(rateEntity.getLike_hit()+1);
+			else
+				rateEntity.setDislike_hit(rateEntity.getDislike_hit()+1);
+		}
+		em.persist(rateEntity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+	
 	public void updateRateByCoordinate(double latitude, double longtitude, boolean isLike) throws PersistenceException{
 		List<ZoneRateEntity> result = null;
 		try{
@@ -212,6 +248,42 @@ public class DBTransService {
 			rateEntity = new ZoneRateEntity();
 			rateEntity.setLatitude(latitude);
 			rateEntity.setLongtitude(longtitude);
+			if(isLike)
+				rateEntity.setLike_hit(1);
+			else
+				rateEntity.setDislike_hit(1);
+		}
+		else{
+			rateEntity = result.get(0);
+			if(isLike){
+				rateEntity.setLike_hit(rateEntity.getLike_hit()+1);
+				rateEntity.setLike_hit(rateEntity.getDislike_hit()-1);
+			}
+			else{
+				rateEntity.setDislike_hit(rateEntity.getDislike_hit()+1);
+				rateEntity.setDislike_hit(rateEntity.getLike_hit()-1);
+			}
+		}
+		em.persist(rateEntity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+	
+	public void addRateByAddress(String address, boolean isLike) throws PersistenceException{
+		List<ZoneRateEntity> result = null;
+		try{
+			Query query = em.createQuery(
+					"select c from ZoneRateEntity c where c.address=:address");
+			query.setParameter("address", address);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
+			return;
+		}
+		ZoneRateEntity rateEntity;
+		if(result==null||result.isEmpty()){
+			rateEntity = new ZoneRateEntity();
+			rateEntity.setAddress(address);
 			if(isLike)
 				rateEntity.setLike_hit(1);
 			else
@@ -251,6 +323,42 @@ public class DBTransService {
 		}
 		else{
 			rateEntity = result.get(0);
+			if(isLike){
+				rateEntity.setLike_hit(rateEntity.getLike_hit()+1);
+				rateEntity.setLike_hit(rateEntity.getDislike_hit()-1);
+			}
+			else{
+				rateEntity.setDislike_hit(rateEntity.getDislike_hit()+1);
+				rateEntity.setDislike_hit(rateEntity.getLike_hit()-1);
+			}
+		}
+		em.persist(rateEntity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+	
+	public void addRateByZip(String zip_code, boolean isLike) throws PersistenceException{
+		List<ZoneRateEntity> result = null;
+		try{
+			Query query = em.createQuery(
+					"select c from ZoneRateEntity c where c.zip_code=:zip_code ");
+			query.setParameter("zip_code", zip_code);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
+			return;
+		}
+		ZoneRateEntity rateEntity;
+		if(result==null||result.isEmpty()){
+			rateEntity = new ZoneRateEntity();
+			rateEntity.setZip_code(zip_code);
+			if(isLike)
+				rateEntity.setLike_hit(1);
+			else
+				rateEntity.setDislike_hit(1);
+		}
+		else{
+			rateEntity = result.get(0);
 			if(isLike)
 				rateEntity.setLike_hit(rateEntity.getLike_hit()+1);
 			else
@@ -283,10 +391,14 @@ public class DBTransService {
 		}
 		else{
 			rateEntity = result.get(0);
-			if(isLike)
+			if(isLike){
 				rateEntity.setLike_hit(rateEntity.getLike_hit()+1);
-			else
+				rateEntity.setLike_hit(rateEntity.getDislike_hit()-1);
+			}
+			else{
 				rateEntity.setDislike_hit(rateEntity.getDislike_hit()+1);
+				rateEntity.setDislike_hit(rateEntity.getLike_hit()-1);
+			}
 		}
 		em.persist(rateEntity);
 		em.setFlushMode(FlushModeType.AUTO);
@@ -347,18 +459,17 @@ public class DBTransService {
 	private ZoneRateBo convertToZoneRateBo(ZoneRateEntity zoneRate) {
 		ZoneRateBo rateBo = new ZoneRateBo();
 		rateBo.setAddress(zoneRate.getAddress());
+		rateBo.setLike_hit(zoneRate.getLike_hit());
 		rateBo.setDislike_hit(zoneRate.getDislike_hit());
 		rateBo.setLatitude(zoneRate.getLatitude());
 		rateBo.setLongtitude(zoneRate.getLongtitude());
 		rateBo.setZip_code(zoneRate.getZip_code());
 		return rateBo;
 	}
-
-	public void insertCacheNote(List<CacheNoteBo> cacheBoList) throws PersistenceException {
-		for(CacheNoteBo cacheBo: cacheBoList){
-			NoteCacheEntity cacheEntity = populateNoteCacheEntity(cacheBo);
-			em.persist(cacheEntity);
-		}
+	
+	public void insertCacheNote(CacheNoteBo cache) throws PersistenceException {
+		NoteCacheEntity cacheEntity = populateNoteCacheEntity(cache);
+		em.persist(cacheEntity);
 		em.setFlushMode(FlushModeType.AUTO);
 		em.flush();
 	}
@@ -366,6 +477,8 @@ public class DBTransService {
 	private NoteCacheEntity populateNoteCacheEntity(CacheNoteBo cacheBo) {
 		NoteCacheEntity cacheEntity = new NoteCacheEntity();
 		NoteBo note = cacheBo.getNoteBo();
+		cacheEntity.setTimeline_id(cacheBo.getNoteBo().getTimeline_id());
+		cacheEntity.setUser_id(cacheBo.getNoteBo().getUser_id());
 		cacheEntity.setDate(note.getDate());
 		cacheEntity.setIdentity_key(cacheBo.getIdentity_key());
 		cacheEntity.setLatitude(note.getLatitude());

@@ -37,6 +37,6 @@ public class FetchMoreHandlerImpl implements FetchMoreHandler {
 		}
 		
 		String bundleId = BundleIdProcessHelper.generateBundleId(identityKey, sequenceId);
-		insertTimelineHandler.insertBundleTimelinesWithoutCover(credential, noteBoList, bundleId);
+		insertTimelineHandler.insertBundleTimelines(credential, noteBoList, bundleId, true);
 	}
 }

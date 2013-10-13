@@ -20,7 +20,7 @@
     
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceXmlLocation" value="/WEB-INF/classes/META-INF/persistence.xml" />
-        <property name="packagesToScan" value="com.template.entity"/>
+        <property name="packagesToScan" value="com.jinhs.fetch.entity"/>
         <property name="persistenceUnitName" value="datanucleus_pu" />
         <property name="loadTimeWeaver">
             <!-- <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" /> -->

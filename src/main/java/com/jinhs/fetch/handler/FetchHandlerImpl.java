@@ -1,6 +1,7 @@
 package com.jinhs.fetch.handler;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -69,8 +70,9 @@ public class FetchHandlerImpl implements FetchHandler {
 				.doubleValue(), location.getLongitude().doubleValue(), "no address avaliable", zipCode, hasExistedContent);
 		
 		if(hasExistedContent){
-			addFetchCacheTask(notification, location, firstGroupNoteListByCoordinate, zipCode);
-			String identityKey = BundleIdProcessHelper.generateIdentityKey(firstGroupNoteListByCoordinate.get(0));
+			Date firstFetchDate = new Date();
+			String identityKey = BundleIdProcessHelper.generateIdentityKey(firstGroupNoteListByCoordinate.get(0), firstFetchDate);
+			addFetchCacheTask(notification, location, firstGroupNoteListByCoordinate, zipCode, identityKey);
 			String bundleId = BundleIdProcessHelper.generateBundleId(identityKey, 0);
 			insertTimelineHandler.insertBundleTimelines(credential, firstGroupNoteListByCoordinate, bundleId, valuationHtml);
 		}
@@ -80,9 +82,9 @@ public class FetchHandlerImpl implements FetchHandler {
 	}
 
 	private void addFetchCacheTask(Notification notification,
-			Location location, List<NoteBo> firstGroupNotes, String zipCode) {
+			Location location, List<NoteBo> firstGroupNotes, String zipCode, String identityKey) {
 		//Add new task to task queue
-		if(firstGroupNotes==null||firstGroupNotes.size()<AppConstants.BUNDLE_SIZE)
+		if(firstGroupNotes==null)
 			return;
 		FetchCacheTaskPayload payload = new FetchCacheTaskPayload();
 		payload.setFirstGroupNotes(firstGroupNotes);
@@ -93,6 +95,8 @@ public class FetchHandlerImpl implements FetchHandler {
 		locationBo.setLongitude(location.getLongitude());
 		locationBo.setZipCode(zipCode);
 		payload.setLocation(locationBo);
+		
+		payload.setIdentityKey(identityKey);
 		
 		Queue queue = QueueFactory.getDefaultQueue();
 		TaskOptions task = TaskOptions.Builder.withUrl("/api/fetchcache").method(Method.POST).payload(new Gson().toJson(payload));

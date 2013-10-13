@@ -23,7 +23,8 @@ public class FetchCacheHandlerImpl implements FetchCacheHandler {
 	public void insert(List<CacheNoteBo> cacheList)
 			throws IOException {
 		populateCachePersistList(cacheList);
-		transService.insertCacheNote(cacheList);
+		for(CacheNoteBo cache:cacheList)
+			transService.insertCacheNote(cache);
 		LOG.info("insert cache");
 	}
 

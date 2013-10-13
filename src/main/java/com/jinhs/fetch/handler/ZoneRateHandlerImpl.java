@@ -3,6 +3,7 @@ package com.jinhs.fetch.handler;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,32 +39,43 @@ public class ZoneRateHandlerImpl implements ZoneRateHandler {
 	}
 
 	@Override
-	public void updateRateByCoordiate(double latitude, double longtitude, boolean isLike)
+	public void updateRateByCoordiate(double latitude, double longtitude, boolean isLike, boolean isModifyPreRecord)
 			throws IOException {
 		LOG.info("update rate at "+latitude+" and "+longtitude+" islike "+isLike);
-		transService.updateRateByCoordinate(latitude, longtitude, isLike);
+		if(isModifyPreRecord)
+			transService.updateRateByCoordinate(latitude, longtitude, isLike);
+		else
+			transService.addRateByCoordinate(latitude, longtitude, isLike);
 	}
 
 	@Override
-	public void updateRateByAddress(String address, boolean isLike) throws IOException {
+	public void updateRateByAddress(String address, boolean isLike, boolean isModifyPreRecord) throws IOException {
 		LOG.info("update rate at address "+address+" and islike "+isLike);
-		transService.updateRateByAddress(address, isLike);
+		if(isModifyPreRecord)
+			transService.updateRateByAddress(address, isLike);
+		else
+			transService.addRateByAddress(address, isLike);
 	}
 
 	@Override
-	public void updateRateByZip(String zip_code, boolean isLike) throws IOException {
+	public void updateRateByZip(String zip_code, boolean isLike, boolean isModifyPreRecord) throws IOException {
 		LOG.info("update rate at zip "+zip_code+" and islike "+isLike);
-		transService.updateRateByZip(zip_code, isLike);
+		if(isModifyPreRecord)
+			transService.updateRateByZip(zip_code, isLike);
+		else
+			transService.addRateByZip(zip_code, isLike);
 	}
 
 	
 
 	private int calculateRate(ZoneRateBo rate) {
+		
 		if(rate==null)
 			return -1;
 		long like = rate.getLike_hit();
 		long dislike = rate.getDislike_hit();
-		if(like==0&&dislike==00)
+		LOG.info("like:"+like+"dislike"+dislike);
+		if(like==0&&dislike==0)
 			return -1;
 		return (int)(like*100/(like+dislike));
 	}

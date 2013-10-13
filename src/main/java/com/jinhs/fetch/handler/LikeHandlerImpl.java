@@ -45,9 +45,13 @@ public class LikeHandlerImpl implements LikeHandler{
 			throw new IOException();
 		}
 		int isRateBefore = transService.isRateBefore(notification.getUserToken(), location.getLatitude(), location.getLongitude());
-		if(isRateBefore!=1){
+		if(isRateBefore==0){
 			transService.upsertRateRecord(notification.getUserToken(), location.getLatitude(), location.getLongitude(), 1);
-			updateZoneRate(location, false);
+			updateZoneRate(location, true, false);
+		}
+		else if(isRateBefore==-1){
+			transService.upsertRateRecord(notification.getUserToken(), location.getLatitude(), location.getLongitude(), 1);
+			updateZoneRate(location, true, true);
 		}
 		else{
 			insertTimelineHandler.insertHasSameRateBefore(credential);
@@ -55,10 +59,10 @@ public class LikeHandlerImpl implements LikeHandler{
 		LOG.info("Like Successfully");
 	}
 
-	private void updateZoneRate(Location location, boolean isLike) throws IOException {
+	private void updateZoneRate(Location location, boolean isLike, boolean isModifyPreRecord) throws IOException {
 		String zipCode = geoCodingHelper.getZipCode(location.getLatitude()
 				.doubleValue(), location.getLongitude().doubleValue());
-		zoneRateHandler.updateRateByCoordiate(location.getLatitude(), location.getLongitude(), isLike);
-		zoneRateHandler.updateRateByZip(zipCode, isLike);
+		zoneRateHandler.updateRateByCoordiate(location.getLatitude(), location.getLongitude(), isLike, isModifyPreRecord);
+		zoneRateHandler.updateRateByZip(zipCode, isLike, isModifyPreRecord);
 	}
 }

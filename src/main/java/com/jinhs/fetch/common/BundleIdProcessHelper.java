@@ -9,16 +9,19 @@ import com.jinhs.fetch.mirror.enums.CustomActionConfigEnum;
 
 public class BundleIdProcessHelper {
 	/**
-	 * payload sample: FETCHMORE#S3#ID&U21324343243&V3432423&H-343434
+	 * payload sample: FETCHMORE#S3#ID&U21324343243&V3432423&H-343434T23232311
+	 * @param firstFetchTime TODO
 	 */
-	public static String generateIdentityKey(NoteBo note) {
+	public static String generateIdentityKey(NoteBo note, Date firstFetchTime) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("&U");
 		sb.append(note.getUser_id());
-		sb.append("&V");
+/*		sb.append("&V");
 		sb.append(note.getLatitude());
 		sb.append("&H");
-		sb.append(note.getLongtitude());
+		sb.append(note.getLongtitude());*/
+		sb.append("#T");
+		sb.append(firstFetchTime.getTime());
 		return sb.toString();
 	}
 
@@ -29,15 +32,14 @@ public class BundleIdProcessHelper {
 		sb.append(sequenceId);
 		sb.append("#ID");
 		sb.append(identityKey);
-		sb.append("#T");
-		sb.append(new Date().getTime());
+		sb.append("#E");
 		return sb.toString();
 	}
 	
 
 	public static String parseIdentityKey(String actionPayload) {
 		Matcher matcher;
-		Pattern patternIdentityKey = Pattern.compile("#ID([^<]+?)#T");
+		Pattern patternIdentityKey = Pattern.compile("#ID([^<]+?)#E");
 	    matcher = patternIdentityKey.matcher(actionPayload);
 	    matcher.find();
 		String identityKey = matcher.group(1);

@@ -10,8 +10,6 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.services.mirror.model.Location;
 import com.google.api.services.mirror.model.Notification;
 import com.jinhs.fetch.bo.NoteBo;
-import com.jinhs.fetch.common.DataProcessHelper;
-import com.jinhs.fetch.common.GeoCodingHelper;
 import com.jinhs.fetch.mirror.MirrorClient;
 import com.jinhs.fetch.transaction.DBTransService;
 

@@ -18,7 +18,6 @@ import com.google.gson.Gson;
 import com.jinhs.fetch.bo.CacheNoteBo;
 import com.jinhs.fetch.bo.LocationBo;
 import com.jinhs.fetch.bo.NoteBo;
-import com.jinhs.fetch.common.BundleIdProcessHelper;
 import com.jinhs.fetch.common.FetchCacheTaskPayload;
 import com.jinhs.fetch.common.GeoCodingHelper;
 import com.jinhs.fetch.handler.FetchCacheHandler;
@@ -47,6 +46,7 @@ public class FetchCacheWorker {
 		FetchCacheTaskPayload taskPayload =  new Gson().fromJson(payload, FetchCacheTaskPayload.class);
 		List<NoteBo> firstGroupList = taskPayload.getFirstGroupNotes();
 		LocationBo location = taskPayload.getLocation();
+		String identityKey = taskPayload.getIdentityKey();
 		
 		List<NoteBo> noteListByCoordinate = null;
 		List<NoteBo> noteListByAddress = null;
@@ -61,34 +61,35 @@ public class FetchCacheWorker {
 		
 		// insert note into cache today for fetch more operation
 		LinkedList<CacheNoteBo> cacheList = populateCacheList(firstGroupList,
-				noteListByCoordinate, noteListByAddress, noteListByZip);
+				noteListByCoordinate, noteListByAddress, noteListByZip, identityKey);
 		fetchCacheHanler.insert(cacheList);
 	}
 	
 	private LinkedList<CacheNoteBo> populateCacheList(List<NoteBo> firstGroupList,
 			List<NoteBo> noteListByCoordinate, List<NoteBo> noteListByAddress,
-			List<NoteBo> noteListByZip) {
+			List<NoteBo> noteListByZip, String identityKey) {
 		LinkedList<CacheNoteBo> cacheList = new LinkedList<CacheNoteBo>();
-		HashSet<String> set = new HashSet<String>();
-
-		processCacheNoteBoList(noteListByCoordinate, cacheList, set);
-		processCacheNoteBoList(noteListByAddress, cacheList, set);
-		processCacheNoteBoList(noteListByZip, cacheList, set);
+		HashSet<String> timelineSet = new HashSet<String>();
+		for(NoteBo note:firstGroupList)
+			timelineSet.add(note.getTimeline_id());
+		
+		processCacheNoteBoList(noteListByCoordinate, cacheList, timelineSet, identityKey);
+		processCacheNoteBoList(noteListByAddress, cacheList, timelineSet, identityKey);
+		processCacheNoteBoList(noteListByZip, cacheList, timelineSet, identityKey);
 		return cacheList;
 	}
 
 	private void processCacheNoteBoList(List<NoteBo> noteList,
-			LinkedList<CacheNoteBo> cacheList, HashSet<String> set) {
+			LinkedList<CacheNoteBo> cacheList, HashSet<String> set, String identityKey) {
 		if(noteList==null||noteList.size()==0)
 			return;
 		for (NoteBo note : noteList) {
-			String identity_key = BundleIdProcessHelper.generateIdentityKey(note);
-			if (!set.contains(identity_key)) {
+			if (!set.contains(note.getTimeline_id())) {
 				CacheNoteBo cache = new CacheNoteBo();
-				cache.setIdentity_key(identity_key);
+				cache.setIdentity_key(identityKey);
 				cache.setNoteBo(note);
 				cacheList.add(cache);
-				set.add(identity_key);
+				set.add(identityKey);
 			}
 		}
 	}
