@@ -24,6 +24,7 @@ import com.jinhs.fetch.common.BundleIdProcessHelper;
 import com.jinhs.fetch.common.DataProcessHelper;
 import com.jinhs.fetch.common.FetchCacheTaskPayload;
 import com.jinhs.fetch.common.GeoCodingHelper;
+import com.jinhs.fetch.common.HtmlContentBuilder;
 import com.jinhs.fetch.mirror.MirrorClient;
 import com.jinhs.fetch.transaction.DBTransService;
 
@@ -66,8 +67,13 @@ public class FetchHandlerImpl implements FetchHandler {
 				location.getLongitude(), AppConstants.BUNDLE_SIZE);
 		
 		boolean hasExistedContent = firstGroupNoteListByCoordinate!=null&&firstGroupNoteListByCoordinate.size()>0;
-		String valuationHtml = populateRateHTML(location.getLatitude()
-				.doubleValue(), location.getLongitude().doubleValue(), "no address avaliable", zipCode, hasExistedContent);
+		int rateByCoordinate = zoneRateHandler.getRateByCoordiate(location.getLatitude()
+				.doubleValue(), location.getLongitude().doubleValue());
+		int rateByAddress = zoneRateHandler.getRateByAddress("no address avaliable");
+		int rateByZip = zoneRateHandler.getRateByZip(zipCode);
+		
+		String valuationHtml = HtmlContentBuilder.populateRateHTML(location.getLatitude()
+				.doubleValue(), location.getLongitude().doubleValue(), rateByCoordinate, rateByAddress, rateByZip);
 		
 		if(hasExistedContent){
 			Date firstFetchDate = new Date();
@@ -105,44 +111,5 @@ public class FetchHandlerImpl implements FetchHandler {
 		queue.addAsync(task);
 	}
 
-	private String populateRateHTML(double latitude, double longtitude, String address, String zip_code, boolean hasExistedNotes) throws IOException {
-		int rateByCoordinate = zoneRateHandler.getRateByCoordiate(latitude, longtitude);
-		int rateByAddress = zoneRateHandler.getRateByAddress(address);
-		int rateByZip = zoneRateHandler.getRateByZip(zip_code);
-		
-		String coorLikeLevel = getColorLevel(rateByCoordinate);
-		String zipLikeLevel = getColorLevel(rateByZip);
-
-		LOG.info("coorLikeLevel:"+coorLikeLevel+" zipLikeLevel"+zipLikeLevel);
-		StringBuffer sb = new StringBuffer();
-		
-		sb.append("<article><figure>");
-		sb.append("<img src=\"");
-		sb.append("glass://map?w=240&h=360&marker=0;37.3471,-121.9312");
-		sb.append("\" height=\"360\" width=\"240\">");
-		sb.append("</figure><section><div class=\"text-auto-size\">");
-		sb.append("<p class=\"");
-		sb.append(coorLikeLevel);
-		sb.append("\">");
-		sb.append(rateByCoordinate+"% like this place");
-		sb.append("</p><p class=\"");
-		sb.append(zipLikeLevel);
-		sb.append("\">");
-		sb.append(rateByZip+"% like this area");
-		sb.append("</p>");
-		sb.append("</div></section></article>");
-		
-		return sb.toString();
-	}
-
-	private String getColorLevel(int rate) {
-		if(rate>=0&&rate<50)
-			return "red";
-		else if(rate>=50&&rate<80)
-			return "yellow";
-		else if(rate>=80&&rate<=100)
-			return "green";
-		else 
-			return "white";
-	}
+	
 }

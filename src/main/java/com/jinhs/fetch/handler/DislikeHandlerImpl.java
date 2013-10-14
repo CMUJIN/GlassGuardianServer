@@ -45,7 +45,7 @@ public class DislikeHandlerImpl implements DislikeHandler {
 			throw new IOException();
 		}
 		int isRateBefore = transService.isRateBefore(notification.getUserToken(), location.getLatitude(), location.getLongitude());
-		if(isRateBefore==0){
+		if(isRateBefore==0){//not rated before
 			transService.upsertRateRecord(notification.getUserToken(), location.getLatitude(), location.getLongitude(), -1);
 			updateZoneRate(location, false, false);
 		}

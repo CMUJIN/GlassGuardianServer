@@ -10,6 +10,7 @@ import javax.persistence.FlushModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 
 import org.apache.log4j.Logger;
 import org.datanucleus.exceptions.ClassNotResolvedException;
@@ -257,11 +258,11 @@ public class DBTransService {
 			rateEntity = result.get(0);
 			if(isLike){
 				rateEntity.setLike_hit(rateEntity.getLike_hit()+1);
-				rateEntity.setLike_hit(rateEntity.getDislike_hit()-1);
+				rateEntity.setDislike_hit(rateEntity.getDislike_hit()-1);
 			}
 			else{
 				rateEntity.setDislike_hit(rateEntity.getDislike_hit()+1);
-				rateEntity.setDislike_hit(rateEntity.getLike_hit()-1);
+				rateEntity.setLike_hit(rateEntity.getLike_hit()-1);
 			}
 		}
 		em.persist(rateEntity);
@@ -325,11 +326,11 @@ public class DBTransService {
 			rateEntity = result.get(0);
 			if(isLike){
 				rateEntity.setLike_hit(rateEntity.getLike_hit()+1);
-				rateEntity.setLike_hit(rateEntity.getDislike_hit()-1);
+				rateEntity.setDislike_hit(rateEntity.getDislike_hit()-1);
 			}
 			else{
 				rateEntity.setDislike_hit(rateEntity.getDislike_hit()+1);
-				rateEntity.setDislike_hit(rateEntity.getLike_hit()-1);
+				rateEntity.setLike_hit(rateEntity.getLike_hit()-1);
 			}
 		}
 		em.persist(rateEntity);
@@ -393,11 +394,11 @@ public class DBTransService {
 			rateEntity = result.get(0);
 			if(isLike){
 				rateEntity.setLike_hit(rateEntity.getLike_hit()+1);
-				rateEntity.setLike_hit(rateEntity.getDislike_hit()-1);
+				rateEntity.setDislike_hit(rateEntity.getDislike_hit()-1);
 			}
 			else{
 				rateEntity.setDislike_hit(rateEntity.getDislike_hit()+1);
-				rateEntity.setDislike_hit(rateEntity.getLike_hit()-1);
+				rateEntity.setLike_hit(rateEntity.getLike_hit()-1);
 			}
 		}
 		em.persist(rateEntity);
@@ -451,6 +452,19 @@ public class DBTransService {
 			rateRecordEntity = result.get(0);
 			rateRecordEntity.setRate(rate);
 			em.merge(rateRecordEntity);
+		}
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+	
+	public void cleanNoteCache(Date cleanDate) throws PersistenceException {
+		try {
+			Query query = em
+					.createQuery("delete c from NoteCacheEntity c where c.date < :date");
+			query.setParameter("date",cleanDate);
+			query.executeUpdate();
+		} catch (ClassNotResolvedException e) {
+			LOG.error("cleanNoteCache DB exception " + e.getMessage());
 		}
 		em.setFlushMode(FlushModeType.AUTO);
 		em.flush();

@@ -15,6 +15,7 @@ import com.google.api.services.mirror.model.MenuItem;
 import com.google.api.services.mirror.model.NotificationConfig;
 import com.google.api.services.mirror.model.TimelineItem;
 import com.jinhs.fetch.bo.NoteBo;
+import com.jinhs.fetch.common.HtmlContentBuilder;
 import com.jinhs.fetch.mirror.MirrorClient;
 import com.jinhs.fetch.mirror.MirrorUtil;
 import com.jinhs.fetch.mirror.TimelinePopulateHelper;
@@ -67,7 +68,7 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 		TimelinePopulateHelper.addCustomMenuItem(actionList, CustomActionConfigEnum.PUSH);
 		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
 		String text = "No more notes avaliable";
-		insertSingleTimeline(credential, text, actionList);
+		insertSingleTimeline(credential, text, null, actionList);
 		LOG.info("insertNoMoreFetchAvaliable successfully");
 	}
 
@@ -106,6 +107,7 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 	public void insertFetchFirst(Credential credential, NoteBo firstNote) throws IOException {
 		TimelineItem timelineItem = TimelinePopulateHelper.populateSingleNote(firstNote, mirrorClient.getMirror(credential));
 		List<MenuItem> actionList = new ArrayList<MenuItem>();
+		TimelinePopulateHelper.addCustomMenuItem(actionList, CustomActionConfigEnum.PUSH);
 		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
 		timelineItem.setMenuItems(actionList);
 		timelineItem.setNotification(new NotificationConfig().setLevel(NotificationLevelEnum.Default.getValue()));
@@ -113,18 +115,22 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 	}
 
 	@Override
-	public void insertNoFirstNoteAvaliable(Credential credential)
+	public void insertNoFirstNoteAvaliable(double latitude, double longtitude, Credential credential)
 			throws IOException {
 		List<MenuItem> actionList = new ArrayList<MenuItem>();
 		TimelinePopulateHelper.addCustomMenuItem(actionList, CustomActionConfigEnum.PUSH);
 		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
-		String text = "Be the first one to note";
-		insertSingleTimeline(credential, text, actionList);
+		String htmlContent = HtmlContentBuilder.populateNoFirstHTML(latitude, longtitude);
+		insertSingleTimeline(credential, null, htmlContent, actionList);
 		LOG.info("insertNoFirstNoteAvaliable successfully");
 	}
 	
-	private void insertSingleTimeline(Credential credential, String text, List<MenuItem> actionList) throws IOException{
-		TimelineItem timelineItem = mirrorUtil.populateTimeLine(text, actionList);
+	private void insertSingleTimeline(Credential credential, String text, String html, List<MenuItem> actionList) throws IOException{
+		TimelineItem timelineItem;
+		if(html!=null)
+			timelineItem = mirrorUtil.populateTimeLineWithHtml(html, actionList);
+		else
+			timelineItem = mirrorUtil.populateTimeLine(text, actionList);
 		timelineItem.setNotification(new NotificationConfig().setLevel(NotificationLevelEnum.Default.getValue()));
 		mirrorClient.insertTimelineItem(credential, timelineItem);
 	}
@@ -134,8 +140,8 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 			throws IOException {
 		List<MenuItem> actionList = new ArrayList<MenuItem>();
 		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
-		String text = "You have given same rate to this point before";
-		insertSingleTimeline(credential, text, actionList);
+		String text = "You have given same rate to this place before";
+		insertSingleTimeline(credential, text, null, actionList);
 		LOG.info("insertHasSameRateBefore successfully");
 	}
 

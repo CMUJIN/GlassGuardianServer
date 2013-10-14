@@ -234,7 +234,7 @@ public class MirrorClientImpl implements MirrorClient {
 	private void formatLocation(Location location) {
 		double latitude = location.getLatitude();
 		double longtitude = location.getLongitude();
-		DecimalFormat df = new DecimalFormat("#.####");
+		DecimalFormat df = new DecimalFormat("#.###");
 		df.setRoundingMode(RoundingMode.HALF_UP);
 		latitude = Double.parseDouble(df.format(latitude));
 		longtitude = Double.parseDouble(df.format(longtitude));

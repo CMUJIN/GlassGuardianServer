@@ -64,10 +64,10 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 				.loadCredential(userId);
 
 		// Create contact
-		Contact starterProjectContact = mirrorUtil.pupulateContact(
+		Contact contact = mirrorUtil.pupulateContact(
 				CONTACT_NAME, CONTACT_NAME, WebUtil.buildContactImageUrl());
 		Contact insertedContact = mirrorClient.insertContact(credential,
-				starterProjectContact);
+				contact);
 		LOG.info("Bootstrapper inserted contact " + insertedContact.getId()
 				+ " for user " + userId);
 

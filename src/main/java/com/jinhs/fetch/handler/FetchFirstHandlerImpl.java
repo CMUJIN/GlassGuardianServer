@@ -42,7 +42,7 @@ public class FetchFirstHandlerImpl implements FetchFirstHandler {
 			LOG.info("Fetch First note, timeline id:"+firstNote.getTimeline_id());
 		}
 		else{
-			insertTimelineHandler.insertNoFirstNoteAvaliable(credential);
+			insertTimelineHandler.insertNoFirstNoteAvaliable(location.getLatitude(), location.getLongitude(),credential);
 			LOG.info("No note avaliable");
 		}
 		LOG.info("Fetch First finish");

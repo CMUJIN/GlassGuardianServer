@@ -327,6 +327,13 @@
 								<include>datastore-indexes.xml</include>
 							</includes>
 						</resource>
+						<resource>
+							<directory>${basedir}/src/main/resources</directory>
+							<targetPath>WEB-INF</targetPath>
+							<includes>
+								<include>cron.xml</include>
+							</includes>
+						</resource>
 					</webResources>
 				</configuration>
 			</plugin>

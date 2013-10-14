@@ -15,7 +15,7 @@ public interface InsertTimelineHandler {
 
 	public void insertFetchFirst(Credential credential, NoteBo firstNote) throws IOException;
 
-	public void insertNoFirstNoteAvaliable(Credential credential)
+	public void insertNoFirstNoteAvaliable(double latitude, double longtitude, Credential credential)
 			throws IOException;
 	
 	public void insertHasSameRateBefore(Credential credential)
