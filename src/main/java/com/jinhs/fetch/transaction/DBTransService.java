@@ -1,8 +1,10 @@
 package com.jinhs.fetch.transaction;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -10,7 +12,6 @@ import javax.persistence.FlushModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
-import javax.persistence.TemporalType;
 
 import org.apache.log4j.Logger;
 import org.datanucleus.exceptions.ClassNotResolvedException;
@@ -28,6 +29,8 @@ import com.jinhs.fetch.entity.ZoneRateEntity;
 @Service
 @Transactional
 public class DBTransService {
+	private static final int MAX_CHACE_DELETE_QUERY_THRESHOLD = 1000;
+
 	private static final Logger LOG = Logger.getLogger(DBTransService.class.getSimpleName());
 
 	@PersistenceContext
@@ -457,17 +460,26 @@ public class DBTransService {
 		em.flush();
 	}
 	
-	public void cleanNoteCache(Date cleanDate) throws PersistenceException {
+	public List<NoteCacheEntity> getDeleteCacheEntity(Date cleanDate) throws PersistenceException {
+		List<NoteCacheEntity> deleteList = null;
 		try {
 			Query query = em
-					.createQuery("delete c from NoteCacheEntity c where c.date < :date");
+					.createQuery("select c from NoteCacheEntity c where c.date < :date");
 			query.setParameter("date",cleanDate);
-			query.executeUpdate();
+			query.setMaxResults(MAX_CHACE_DELETE_QUERY_THRESHOLD);
+			deleteList = query.getResultList();
 		} catch (ClassNotResolvedException e) {
 			LOG.error("cleanNoteCache DB exception " + e.getMessage());
 		}
+		return deleteList;
+	}
+	
+	public void deleteNoteCache(NoteCacheEntity entity)throws PersistenceException {
+		NoteCacheEntity deleteEntity = em.find(NoteCacheEntity.class, entity.getKey());
+		em.remove(deleteEntity);
 		em.setFlushMode(FlushModeType.AUTO);
 		em.flush();
+
 	}
 
 	private ZoneRateBo convertToZoneRateBo(ZoneRateEntity zoneRate) {
