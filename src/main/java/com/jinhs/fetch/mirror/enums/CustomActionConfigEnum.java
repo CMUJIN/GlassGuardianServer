@@ -8,7 +8,7 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/action_fetch.png";
+			return "https://glassfetch.appspot.com/static/images/action-fetch.png";
 		}
 
 		public String getType() {
@@ -22,7 +22,7 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/action_more.png";
+			return "https://glassfetch.appspot.com/static/images/action-more.png";
 		}
 
 		public String getType() {
@@ -36,7 +36,7 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/action_first.png";
+			return "https://glassfetch.appspot.com/static/images/action-first.png";
 		}
 
 		public String getType() {
@@ -50,7 +50,7 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/action_push.png";
+			return "https://glassfetch.appspot.com/static/images/action-push.png";
 		}
 
 		public String getType() {
@@ -64,7 +64,7 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/action_like.png";
+			return "https://glassfetch.appspot.com/static/images/action-like.png";
 		}
 
 		public String getType() {
@@ -78,7 +78,7 @@ public enum CustomActionConfigEnum {
 		}
 
 		public String getIconUrl() {
-			return "https://glassfetch.appspot.com/static/images/action_dislike.png";
+			return "https://glassfetch.appspot.com/static/images/action-dislike.png";
 		}
 
 		public String getType() {

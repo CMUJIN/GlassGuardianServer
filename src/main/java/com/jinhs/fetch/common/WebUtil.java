@@ -33,7 +33,7 @@ public class WebUtil {
 	}
 	
 	public static String buildHomeBackgroundImageUrl(){
-		return RESOURCEHOST+"/static/images/welcome_bg.jpg";
+		return RESOURCEHOST+"/static/images/tile640x360.png";
 	}
 	
 }
