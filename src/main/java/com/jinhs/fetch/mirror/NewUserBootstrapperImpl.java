@@ -46,7 +46,7 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 	private static final Logger LOG = Logger
 			.getLogger(NewUserBootstrapperImpl.class.getSimpleName());
 
-	public static final String CONTACT_NAME = "FETCH";
+	public static final String CONTACT_NAME = "Fetch";
 
 	@Autowired
 	AuthUtil authUtil;

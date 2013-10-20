@@ -21,11 +21,11 @@ public class WebUtil {
 	}
 	
 	public static String buildWelcomeImageUrl(){
-		return RESOURCEHOST+"/static/images/welcome_bg.jpg";
+		return RESOURCEHOST+"/static/images/tile640x360.png";
 	}
 	
 	public static String buildContactImageUrl(){
-		return RESOURCEHOST+"/static/images/welcome_bg.jpg";
+		return RESOURCEHOST+"/static/images/tile640x360.png";
 	}
 	
 	public static String buildNotifyWorkerUrl(){

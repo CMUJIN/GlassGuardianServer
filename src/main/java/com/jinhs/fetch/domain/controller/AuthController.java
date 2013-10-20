@@ -53,7 +53,7 @@ public class AuthController {
 			newUserBootstrapper.bootstrapNewUser(userId);
 
 			// Redirect back to index
-			return "authsuccess";
+			return "aftersignin";
 		}
 
 		// Else, we have a new flow. Initiate a new flow.
@@ -65,5 +65,5 @@ public class AuthController {
 		url.set("approval_prompt", "force");
 		return "redirect:" + url.build();
 	}
-	}
+}
 
