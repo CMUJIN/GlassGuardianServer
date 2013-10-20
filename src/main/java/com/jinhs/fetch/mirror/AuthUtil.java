@@ -40,6 +40,8 @@ public class AuthUtil {
 
 	    String clientId = authProperties.getProperty("client_id");
 	    String clientSecret = authProperties.getProperty("client_secret");
+//	    String clientId = authProperties.getProperty("client_id_test");
+//	    String clientSecret = authProperties.getProperty("client_secret_test");
 	    
 //	    String clientId = authProperties.getProperty("client_id_local");
 //	    String clientSecret = authProperties.getProperty("client_secret_local");

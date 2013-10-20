@@ -61,7 +61,7 @@ public class DislikeHandlerImpl implements DislikeHandler {
 
 	private void updateZoneRate(Location location, boolean isLike, boolean isModifyPreRecord) throws IOException {
 		String zipCode = geoCodingHelper.getZipCode(location.getLatitude()
-				.doubleValue(), location.getLongitude().doubleValue());
+				.doubleValue(), location.getLongitude().doubleValue()).getZip_code();
 		zoneRateHandler.updateRateByCoordiate(location.getLatitude(), location.getLongitude(), isLike, isModifyPreRecord);
 		zoneRateHandler.updateRateByZip(zipCode, isLike, isModifyPreRecord);
 	}

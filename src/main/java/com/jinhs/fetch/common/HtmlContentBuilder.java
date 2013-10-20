@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 public class HtmlContentBuilder {
 	private static final Logger LOG = Logger.getLogger(HtmlContentBuilder.class.getSimpleName());
 	
-	public static String populateRateHTML(double latitude, double longtitude, int rateByCoordinate, int rateByAddress, int rateByZip) throws IOException {
+	public static String populateRateHTML(double latitude, double longtitude, String address, int rateByCoordinate, int rateByAddress, int rateByZip) throws IOException {
 		String coorLikeLevel = getColorLevel(rateByCoordinate);
 		String zipLikeLevel = getColorLevel(rateByZip);
 
@@ -18,7 +18,9 @@ public class HtmlContentBuilder {
 		sb.append("<img src=\"");
 		sb.append("glass://map?w=240&h=360&marker=0;"+latitude+","+longtitude+"");
 		sb.append("\" height=\"360\" width=\"240\">");
-		sb.append("</figure><section><div class=\"text-auto-size\">");
+		sb.append("</figure><section>");
+		
+		sb.append("<div class=\"text-normal\">");
 		
 		if(rateByCoordinate<0&&rateByZip<0){
 			sb.append("<p>No Rate Avaliable</p>");
@@ -27,14 +29,17 @@ public class HtmlContentBuilder {
 			sb.append("<p class=\"");
 			sb.append(coorLikeLevel);
 			sb.append("\">");
-			sb.append(rateByCoordinate+"% like the place");
+			sb.append("Place:"+rateByCoordinate+"% like");
 			sb.append("</p><p class=\"");
 			sb.append(zipLikeLevel);
 			sb.append("\">");
-			sb.append(rateByZip+"% like the area");
+			sb.append("Area:"+rateByZip+"% like");
 			sb.append("</p>");
 		}
-		
+		sb.append("</div>");
+		sb.append(" <hr><div><p class=\"text-minor\">");
+		sb.append(address);
+		sb.append("</p></div>");
 		sb.append("</div></section></article>");
 		
 		return sb.toString();
@@ -59,7 +64,7 @@ public class HtmlContentBuilder {
 		sb.append("\" height=\"360\" width=\"240\">");
 		sb.append("</figure><section><div class=\"text-auto-size\">");
 		sb.append("<p>");
-		sb.append("No one leave message so far");
+		sb.append("No message so far");
 		sb.append("</p>");
 		sb.append("<p class=\"yellow\">");
 		sb.append("Be the first person to leave a footprint");

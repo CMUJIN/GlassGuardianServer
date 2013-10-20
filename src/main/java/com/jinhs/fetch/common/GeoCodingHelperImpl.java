@@ -17,12 +17,28 @@ public class GeoCodingHelperImpl implements GeoCodingHelper {
 	private static final Logger LOG = Logger.getLogger(GeoCodingHelperImpl.class.getSimpleName());
 	
 	@Override
-	public String getZipCode(double latitude, double longtitude) throws IOException {
+	public LightLocation getZipCode(double latitude, double longtitude) throws IOException {
 		URL url = generateUrl(latitude, longtitude);
 		LOG.info("geolocation url:"+url.toString());
         LocationResult data = new Gson().fromJson(getStringFromInputStream(url.openStream()), LocationResult.class);
         String zipCode = getCode(data);
-        return zipCode;
+        String address = getAddress(data);
+        LightLocation location = new LightLocation();
+        location.setZip_code(zipCode);
+        if(address==null)
+        	location.setAddress("");
+        else 
+        	location.setAddress(address);
+        LOG.info("address:"+address);
+        return location;
+	}
+	private String getAddress(LocationResult data) {
+		if(data==null)
+			return null;
+		if(data.getResults()==null||data.getResults().size()==0)
+			return null;
+		
+		return data.getResults().get(0).getFormatted_address();
 	}
 	private String getCode(LocationResult data) {
 		for(ResultData result:data.getResults()){

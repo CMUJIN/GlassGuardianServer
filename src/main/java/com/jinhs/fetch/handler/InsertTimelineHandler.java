@@ -8,7 +8,7 @@ import com.jinhs.fetch.bo.NoteBo;
 
 public interface InsertTimelineHandler {
 	public void insertBundleTimelines(Credential credential,
-			List<NoteBo> noteBoList, String bundleId, boolean isFirstAsCover) throws IOException;
+			List<NoteBo> noteBoList, String bundleId, boolean needNotification) throws IOException;
 
 	public void insertNoMoreFetchAvaliable(Credential credential)
 			throws IOException;

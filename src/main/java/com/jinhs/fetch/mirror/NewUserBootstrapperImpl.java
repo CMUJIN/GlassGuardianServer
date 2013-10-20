@@ -95,7 +95,7 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 		URL url = new URL(WebUtil.buildHomeBackgroundImageUrl());
 		InputStream attachment =  url.openStream();
 		mirrorClient.insertTimelineItem(credential,
-				timelineItem, "image/png", attachment);
+				timelineItem, "image/jpeg", attachment);
 		LOG.info("Bootstrapper inserted welcome message "
 				+ timelineItem.getId() + " for user " + userId);
 	}

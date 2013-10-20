@@ -35,7 +35,7 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 	
 	@Override
 	public void insertBundleTimelines(Credential credential,
-			List<NoteBo> noteBoList, String bundleId, boolean isFirstAsCover) throws IOException {
+			List<NoteBo> noteBoList, String bundleId, boolean needNotification) throws IOException {
 		
 		List<MenuItem> actionList = new ArrayList<MenuItem>();
 		TimelinePopulateHelper.addCustomMenuItemWithPayload(actionList, CustomActionConfigEnum.FETCH_MORE, bundleId);
@@ -44,7 +44,10 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 		for (TimelineItem timelineItem : TimelinePopulateHelper
 				.populateBundleNotes(noteBoList,
 						mirrorClient.getMirror(credential), bundleId)) {
-			timelineItem.setNotification(new NotificationConfig().setLevel(NotificationLevelEnum.Default.getValue()));
+			if(needNotification){
+				timelineItem.setNotification(new NotificationConfig().setLevel(NotificationLevelEnum.Default.getValue()));
+				needNotification = false;
+			}
 			timelineItem.setMenuItems(actionList);
 			if(timelineItem.getAttachments()!=null){
 				

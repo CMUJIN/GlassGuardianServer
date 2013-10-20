@@ -25,6 +25,7 @@ import com.jinhs.fetch.common.DataProcessHelper;
 import com.jinhs.fetch.common.FetchCacheTaskPayload;
 import com.jinhs.fetch.common.GeoCodingHelper;
 import com.jinhs.fetch.common.HtmlContentBuilder;
+import com.jinhs.fetch.common.LightLocation;
 import com.jinhs.fetch.mirror.MirrorClient;
 import com.jinhs.fetch.transaction.DBTransService;
 
@@ -58,9 +59,9 @@ public class FetchHandlerImpl implements FetchHandler {
 			LOG.info("Location load failed");
 			throw new IOException();
 		}
-		
-		String zipCode = geoCodingHelper.getZipCode(location.getLatitude()
+		LightLocation lightLocation = geoCodingHelper.getZipCode(location.getLatitude()
 				.doubleValue(), location.getLongitude().doubleValue());
+		String zipCode = lightLocation.getZip_code();
 		// query first group notes
 		List<NoteBo> firstGroupNoteListByCoordinate = transService.fetchFirstGroupNotesByCoordinate(
 				notification.getUserToken(), location.getLatitude(),
@@ -73,7 +74,7 @@ public class FetchHandlerImpl implements FetchHandler {
 		int rateByZip = zoneRateHandler.getRateByZip(zipCode);
 		
 		String valuationHtml = HtmlContentBuilder.populateRateHTML(location.getLatitude()
-				.doubleValue(), location.getLongitude().doubleValue(), rateByCoordinate, rateByAddress, rateByZip);
+				.doubleValue(), location.getLongitude().doubleValue(), lightLocation.getAddress(), rateByCoordinate, rateByAddress, rateByZip);
 		
 		if(hasExistedContent){
 			Date firstFetchDate = new Date();

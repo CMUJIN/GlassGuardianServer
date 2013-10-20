@@ -40,7 +40,7 @@ public class NoteBoHelperImpl implements NoteBoHelper {
 		noteBo.setLatitude(location.getLatitude());
 		noteBo.setLongtitude(location.getLongitude());
 		noteBo.setZip_code(geoCodingHelper.getZipCode(location.getLatitude()
-				.doubleValue(), location.getLongitude().doubleValue()));
+				.doubleValue(), location.getLongitude().doubleValue()).getZip_code());
 
 		noteBo.setUser_id(notification.getUserToken());
 		noteBo.setDate(new Date());
