@@ -67,8 +67,8 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 		List<MenuItem> actionList = new ArrayList<MenuItem>();
 		TimelinePopulateHelper.addCustomMenuItem(actionList, CustomActionConfigEnum.PUSH);
 		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
-		String text = "No more notes avaliable";
-		insertSingleTimeline(credential, text, null, actionList);
+		String htmlContent = HtmlContentBuilder.populateDefaultTextHTML("No more message avaliable");
+		insertSingleTimeline(credential, null, htmlContent, actionList);
 		LOG.info("insertNoMoreFetchAvaliable successfully");
 	}
 
@@ -140,8 +140,8 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 			throws IOException {
 		List<MenuItem> actionList = new ArrayList<MenuItem>();
 		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
-		String text = "You have given same rate to this place before";
-		insertSingleTimeline(credential, text, null, actionList);
+		String htmlContent = HtmlContentBuilder.populateDefaultTextHTML("You have given same rate to this place before");
+		insertSingleTimeline(credential, null, htmlContent, actionList);
 		LOG.info("insertHasSameRateBefore successfully");
 	}
 

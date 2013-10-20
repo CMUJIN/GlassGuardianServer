@@ -90,7 +90,7 @@ public class NewUserBootstrapperImpl implements NewUserBootstrapper {
 		TimelinePopulateHelper.addCustomMenuItem(menuItemList, CustomActionConfigEnum.FETCH_FIRST);
 		TimelinePopulateHelper.addMenuItem(menuItemList, MenuItemActionEnum.TOGGLE_PINNED);
 		TimelineItem timelineItem = mirrorUtil.populateTimeLine(
-				"Fetch & Leave Footprints", menuItemList);
+				"Fetch & Leave Footprint", menuItemList);
 		
 		URL url = new URL(WebUtil.buildHomeBackgroundImageUrl());
 		InputStream attachment =  url.openStream();

@@ -11,6 +11,7 @@ import com.google.api.services.mirror.model.Location;
 import com.google.api.services.mirror.model.Notification;
 import com.jinhs.fetch.bo.NoteBo;
 import com.jinhs.fetch.mirror.MirrorClient;
+import com.jinhs.fetch.mirror.TimelinePopulateHelper;
 import com.jinhs.fetch.transaction.DBTransService;
 
 @Component
@@ -37,6 +38,11 @@ public class FetchFirstHandlerImpl implements FetchFirstHandler {
 		}
 		
 		NoteBo firstNote = transService.fetchFirstNoteByCoordinate(location.getLatitude(), location.getLongitude());
+		while(TimelinePopulateHelper.isDeletedTimeline(firstNote.getTimeline_id(), mirrorClient.getMirror(credential))){
+			transService.deleteEmptyNote(firstNote.getKey());
+			firstNote = transService.fetchFirstNoteByCoordinate(location.getLatitude(), location.getLongitude());
+		}
+		
 		if(firstNote!=null){
 			insertTimelineHandler.insertFetchFirst(credential, firstNote);
 			LOG.info("Fetch First note, timeline id:"+firstNote.getTimeline_id());

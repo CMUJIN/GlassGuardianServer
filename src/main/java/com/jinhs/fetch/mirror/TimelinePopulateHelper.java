@@ -23,6 +23,8 @@ public class TimelinePopulateHelper {
 		List<TimelineItem> list = new ArrayList<TimelineItem>();
 		for(NoteBo note:notes){
 			TimelineItem timelineItem = populateSingleNote(note, mirrorService);
+			if(timelineItem==null)
+				continue;
 			timelineItem.setBundleId(bundleId);
 			list.add(timelineItem);
 		}
@@ -32,6 +34,8 @@ public class TimelinePopulateHelper {
 	
 	public static TimelineItem populateSingleNote(NoteBo note, Mirror mirrorService) throws IOException{
 		TimelineItem item =  mirrorService.timeline().get(note.getTimeline_id()).execute();
+		if(isDeletedTimeline(note.getTimeline_id(), mirrorService))
+			return null;
 		LOG.info("single note timeline id:"+item.getId());
 		TimelineItem timelineItem = new TimelineItem();
 		timelineItem.setId(note.getTimeline_id());
@@ -49,6 +53,16 @@ public class TimelinePopulateHelper {
 			}
 		}
 		return timelineItem;
+	}
+	
+
+	public static boolean isDeletedTimeline(String timelineId, Mirror mirrorService) throws IOException{
+		TimelineItem item =  mirrorService.timeline().get(timelineId).execute();
+		boolean result =false;
+		if(item.getText()==null&&item.getHtml()==null&&item.getAttachments()==null)
+			result = true;
+		LOG.info("isDeletedTimeline timeline "+timelineId+" is empty "+result);
+		return result;
 	}
 	
 	public static void addMenuItem(List<MenuItem> menuItemList, MenuItemActionEnum action) {

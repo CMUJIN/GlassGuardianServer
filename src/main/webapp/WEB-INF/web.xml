@@ -89,8 +89,8 @@
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/view/*</url-pattern>
 	</servlet-mapping>
-
+	
 	<welcome-file-list>
-		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 </web-app>

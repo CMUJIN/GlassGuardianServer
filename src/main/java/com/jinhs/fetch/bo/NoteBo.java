@@ -2,9 +2,13 @@ package com.jinhs.fetch.bo;
 
 import java.util.Date;
 
+import com.google.appengine.api.datastore.Key;
+
 
 
 public class NoteBo {
+	private Key key;
+	
 	private String user_id;
 	
 	private int valuation;
@@ -153,5 +157,13 @@ public class NoteBo {
 
 	public void setLocation_id(String location_id) {
 		this.location_id = location_id;
+	}
+
+	public Key getKey() {
+		return key;
+	}
+
+	public void setKey(Key key) {
+		this.key = key;
 	}
 }

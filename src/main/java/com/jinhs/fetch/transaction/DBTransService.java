@@ -18,6 +18,7 @@ import org.datanucleus.exceptions.ClassNotResolvedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.appengine.api.datastore.Key;
 import com.jinhs.fetch.bo.CacheNoteBo;
 import com.jinhs.fetch.bo.NoteBo;
 import com.jinhs.fetch.bo.ZoneRateBo;
@@ -500,6 +501,13 @@ public class DBTransService {
 		em.flush();
 	}
 	
+	public void deleteEmptyNote(Key key) {
+		NoteEntity deleteEntity = em.find(NoteEntity.class, key);
+		em.remove(deleteEntity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+	
 	private NoteCacheEntity populateNoteCacheEntity(CacheNoteBo cacheBo) {
 		NoteCacheEntity cacheEntity = new NoteCacheEntity();
 		NoteBo note = cacheBo.getNoteBo();
@@ -542,6 +550,7 @@ public class DBTransService {
 
 	private NoteBo populateNoteBo(NoteEntity entity){
 		NoteBo noteBo = new NoteBo();
+		noteBo.setKey(entity.getKey());
 		noteBo.setUser_id(entity.getUser_id());
 		noteBo.setValuation(entity.getValuation());
 		noteBo.setText_note(entity.getText_note());
@@ -579,5 +588,4 @@ public class DBTransService {
 		entity.setAttachment_id(noteBo.getAttachment_id());
 		return entity;
 	}
-	
 }

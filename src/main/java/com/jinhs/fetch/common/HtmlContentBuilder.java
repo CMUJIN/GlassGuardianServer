@@ -27,11 +27,11 @@ public class HtmlContentBuilder {
 			sb.append("<p class=\"");
 			sb.append(coorLikeLevel);
 			sb.append("\">");
-			sb.append(rateByCoordinate+"% like this place");
+			sb.append(rateByCoordinate+"% like the place");
 			sb.append("</p><p class=\"");
 			sb.append(zipLikeLevel);
 			sb.append("\">");
-			sb.append(rateByZip+"% like this area");
+			sb.append(rateByZip+"% like the area");
 			sb.append("</p>");
 		}
 		
@@ -65,6 +65,17 @@ public class HtmlContentBuilder {
 		sb.append("Be the first person to leave a footprint");
 		sb.append("</p>");
 		sb.append("</div></section></article>");
+		return sb.toString();
+	}
+	
+	public static String populateDefaultTextHTML(String text){
+		StringBuffer sb = new StringBuffer();
+		sb.append("<article>\n  <figure>\n");
+		sb.append("<img src=\"http://glassfetch.appspot.com/static/images/tile360x240.png\" height=\"360\" width=\"240\">\n");
+		sb.append("</figure>\n  <section>\n   ");  
+		sb.append("<p class=\"text-auto-size\">\n  ");
+		sb.append(text);
+		sb.append(" </p>\n</section>\n</article>\n");
 		return sb.toString();
 	}
 }

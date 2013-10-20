@@ -9,6 +9,7 @@ import com.google.api.services.mirror.model.MenuItem;
 import com.google.api.services.mirror.model.NotificationConfig;
 import com.google.api.services.mirror.model.TimelineItem;
 import com.google.common.collect.Lists;
+import com.jinhs.fetch.bo.NoteBo;
 import com.jinhs.fetch.mirror.enums.NotificationLevelEnum;
 
 @Component
