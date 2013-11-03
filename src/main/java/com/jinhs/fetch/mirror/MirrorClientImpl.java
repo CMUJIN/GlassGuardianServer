@@ -228,6 +228,7 @@ public class MirrorClientImpl implements MirrorClient {
 		if(location==null)
 			LOG.info("location is null");
 		formatLocation(location);
+		LOG.info("latest location, latitude:"+location.getLatitude()+"longtitude:"+location.getLongitude());
 		return location;
 	}
 

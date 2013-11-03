@@ -41,15 +41,19 @@ public class InsertTimelineHandlerImpl implements InsertTimelineHandler {
 		TimelinePopulateHelper.addCustomMenuItemWithPayload(actionList, CustomActionConfigEnum.FETCH_MORE, bundleId);
 		TimelinePopulateHelper.addMenuItem(actionList, MenuItemActionEnum.DELETE);
 		
-		for (TimelineItem timelineItem : TimelinePopulateHelper
+		List<TimelineItem> bundleList = TimelinePopulateHelper
 				.populateBundleNotes(noteBoList,
-						mirrorClient.getMirror(credential), bundleId)) {
+						mirrorClient.getMirror(credential), bundleId);
+		if(bundleList==null||bundleList.size()==0)
+			insertNoMoreFetchAvaliable(credential);
+		for (TimelineItem timelineItem : bundleList) {
 			if(needNotification){
 				timelineItem.setNotification(new NotificationConfig().setLevel(NotificationLevelEnum.Default.getValue()));
 				needNotification = false;
 			}
 			timelineItem.setMenuItems(actionList);
-			if(timelineItem.getAttachments()!=null){
+			LOG.info("insert timeline ");
+			if(timelineItem.getAttachments()!=null&&timelineItem.getAttachments().size()!=0){
 				
 				Attachment attachment = timelineItem.getAttachments().get(0);
 				LOG.info("has attachment " +attachment.getContentUrl().toString());

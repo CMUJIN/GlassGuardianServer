@@ -22,20 +22,22 @@ public class HtmlContentBuilder {
 		
 		sb.append("<div class=\"text-normal\">");
 		
-		if(rateByCoordinate<0&&rateByZip<0){
-			sb.append("<p>No Rate Avaliable</p>");
-		}
-		else{
-			sb.append("<p class=\"");
-			sb.append(coorLikeLevel);
-			sb.append("\">");
+		sb.append("<p class=\"");
+		sb.append(coorLikeLevel);
+		sb.append("\">");
+		if(rateByCoordinate<0)
+			sb.append("Place: unrated");
+		else
 			sb.append("Place:"+rateByCoordinate+"% like");
-			sb.append("</p><p class=\"");
-			sb.append(zipLikeLevel);
-			sb.append("\">");
+		sb.append("</p><p class=\"");
+		sb.append(zipLikeLevel);
+		sb.append("\">");
+		if(rateByZip<0)
+			sb.append("Area: unrated");
+		else
 			sb.append("Area:"+rateByZip+"% like");
-			sb.append("</p>");
-		}
+		sb.append("</p>");
+		
 		sb.append("</div>");
 		sb.append(" <hr><div><p class=\"text-minor\">");
 		sb.append(address);

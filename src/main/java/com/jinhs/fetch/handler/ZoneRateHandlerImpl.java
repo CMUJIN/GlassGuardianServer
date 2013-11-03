@@ -3,7 +3,6 @@ package com.jinhs.fetch.handler;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
-import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

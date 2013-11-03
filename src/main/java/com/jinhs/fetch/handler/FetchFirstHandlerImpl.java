@@ -3,6 +3,7 @@ package com.jinhs.fetch.handler;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,11 +39,12 @@ public class FetchFirstHandlerImpl implements FetchFirstHandler {
 		}
 		
 		NoteBo firstNote = transService.fetchFirstNoteByCoordinate(location.getLatitude(), location.getLongitude());
-		while(TimelinePopulateHelper.isDeletedTimeline(firstNote.getTimeline_id(), mirrorClient.getMirror(credential))){
+		LOG.info("firstNote");
+		while(firstNote!=null&&TimelinePopulateHelper.isDeletedTimeline(firstNote.getTimeline_id(), mirrorClient.getMirror(credential))){
+			Log.info("Delete empty itemline");
 			transService.deleteEmptyNote(firstNote.getKey());
 			firstNote = transService.fetchFirstNoteByCoordinate(location.getLatitude(), location.getLongitude());
 		}
-		
 		if(firstNote!=null){
 			insertTimelineHandler.insertFetchFirst(credential, firstNote);
 			LOG.info("Fetch First note, timeline id:"+firstNote.getTimeline_id());

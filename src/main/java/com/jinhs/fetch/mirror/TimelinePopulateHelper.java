@@ -21,20 +21,27 @@ public class TimelinePopulateHelper {
 	public static List<TimelineItem> populateBundleNotes(List<NoteBo> notes, Mirror mirrorService, String bundleId) throws IOException{
 		LOG.info("populate bundle timelines");
 		List<TimelineItem> list = new ArrayList<TimelineItem>();
-		for(NoteBo note:notes){
+		for(int i=0;i<notes.size();i++){
+			NoteBo note = notes.get(notes.size()-1-i);
 			TimelineItem timelineItem = populateSingleNote(note, mirrorService);
-			if(timelineItem==null)
-				continue;
-			timelineItem.setBundleId(bundleId);
-			list.add(timelineItem);
+			if(timelineItem!=null){
+				timelineItem.setBundleId(bundleId);
+				list.add(timelineItem);
+			}
 		}
 		
 		return list;
 	}
 	
-	public static TimelineItem populateSingleNote(NoteBo note, Mirror mirrorService) throws IOException{
-		TimelineItem item =  mirrorService.timeline().get(note.getTimeline_id()).execute();
-		if(isDeletedTimeline(note.getTimeline_id(), mirrorService))
+	public static TimelineItem populateSingleNote(NoteBo note, Mirror mirrorService) {
+		TimelineItem item = null;
+		try {
+			item = mirrorService.timeline().get(note.getTimeline_id()).execute();
+		} catch (IOException e) {
+			LOG.info("timeline is deleted");
+			return null;
+		}
+		if(isEmptyContentTimeline(item))
 			return null;
 		LOG.info("single note timeline id:"+item.getId());
 		TimelineItem timelineItem = new TimelineItem();
@@ -46,7 +53,13 @@ public class TimelinePopulateHelper {
 		if(item.getAttachments()!=null && item.getAttachments().size()!=0){
 			List<Attachment> attList = new ArrayList<Attachment>();
 			for(Attachment attch: item.getAttachments()){
-				Attachment attachment = mirrorService.timeline().attachments().get(item.getId(), attch.getId()).execute();	
+				Attachment attachment = null;
+				try {
+					attachment = mirrorService.timeline().attachments().get(item.getId(), attch.getId()).execute();
+				} catch (IOException e) {
+					LOG.info("attachment is not avaliable");
+					break;
+				}	
 				attList.add(attachment);
 				timelineItem.setAttachments(attList);
 				LOG.info("insert attachment id:"+note.getAttachment_id());
@@ -56,12 +69,25 @@ public class TimelinePopulateHelper {
 	}
 	
 
-	public static boolean isDeletedTimeline(String timelineId, Mirror mirrorService) throws IOException{
-		TimelineItem item =  mirrorService.timeline().get(timelineId).execute();
+	public static boolean isDeletedTimeline(String timelineId, Mirror mirrorService){
+		LOG.info("check is deleted item");
+		TimelineItem item = null;
+		try {
+			item = mirrorService.timeline().get(timelineId).execute();
+		} catch (IOException e) {
+			LOG.info("item is not avaliable");
+			return true;
+		}
+		return isEmptyContentTimeline(item);
+	}
+
+	private static boolean isEmptyContentTimeline(TimelineItem item) {
+		if(item==null)
+			return true;
 		boolean result =false;
 		if(item.getText()==null&&item.getHtml()==null&&item.getAttachments()==null)
 			result = true;
-		LOG.info("isDeletedTimeline timeline "+timelineId+" is empty "+result);
+		LOG.info("check is empty item:"+result);
 		return result;
 	}
 	

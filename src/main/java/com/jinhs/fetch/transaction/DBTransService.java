@@ -39,6 +39,7 @@ public class DBTransService {
 	
 	@Transactional(readOnly = true)
 	public NoteBo fetchFirstNoteByCoordinate(double latitude, double longtitude) throws PersistenceException{
+		LOG.info("fetchFirstNoteByCoordinate");
 		List<NoteEntity> result;
 		try{
 			Query query = em.createQuery(

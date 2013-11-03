@@ -62,8 +62,12 @@ public class NotificationWorker {
 	 * processGet() throws IOException { return; }
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public void process(@RequestBody String payload, HttpServletResponse httpResponse) throws IOException {
-		httpResponse.getOutputStream().close();
+	public void process(@RequestBody String payload, HttpServletResponse httpResponse){
+		try {
+			httpResponse.getOutputStream().close();
+		} catch (IOException e) {
+			LOG.error(e.getMessage());
+		}
 		
 		Notification request = new Gson().fromJson(payload, Notification.class);
 		Iterator<?> actionMapItr = request.getUserActions().iterator();
@@ -91,7 +95,12 @@ public class NotificationWorker {
 		LOG.info("Got a notification with ID:"+request.getItemId());
 		// Figure out the impacted user and get their credentials for API calls
 		String userId = request.getUserToken();
-		Credential credential = authUtil.getCredential(userId);
+		Credential credential = null;
+		try {
+			credential = authUtil.getCredential(userId);
+		} catch (IOException e) {
+			LOG.error(e.getMessage());
+		}
 		if (credential == null) {
 			LOG.info("authentication failed, user token: "
 					+ request.getUserToken());
@@ -102,33 +111,61 @@ public class NotificationWorker {
 		// if multiple actions share the same built-in action type, cannot
 		// distinguished by payload
 		if(actionType.equals(MenuItemActionEnum.REPLY.getValue())){
-			pushHandler.push(request, credential);
+			try {
+				pushHandler.push(request, credential);
+			} catch (IOException e) {
+				LOG.error(e.getMessage());
+			}
 			return;
 		}
 		else if(actionType.equals(MenuItemActionEnum.SHARE.getValue())){
-			pushHandler.push(request, credential);
+			try {
+				pushHandler.push(request, credential);
+			} catch (IOException e) {
+				LOG.error(e.getMessage());
+			}
 			return;
 		}
 		else if(actionType.equals(MenuItemActionEnum.CUSTOM.getValue())){
 			if(actionPayload.equals(CustomActionConfigEnum.FETCH.getName())){
-				fetchHandler.fetch(request, credential);
+				try {
+					fetchHandler.fetch(request, credential);
+				} catch (IOException e) {
+					LOG.error(e.getMessage());
+				}
 				return;
 			}
 			else if(actionPayload.equals(CustomActionConfigEnum.LIKE.getName())){
-				likeHandler.like(request, credential);
+				try {
+					likeHandler.like(request, credential);
+				} catch (IOException e) {
+					LOG.error(e.getMessage());
+				}
 				return;
 			}
 			else if(actionPayload.equals(CustomActionConfigEnum.DISLIKE.getName())){
-				dislikeHandler.dislike(request, credential);
+				try {
+					dislikeHandler.dislike(request, credential);
+				} catch (IOException e) {
+					LOG.error(e.getMessage());
+				}
 				return;
 			}
 			else if(actionPayload.equals(CustomActionConfigEnum.FETCH_FIRST.getName())){
-				fetchFirstHandler.fetchFirst(request, credential);
+				try {
+					fetchFirstHandler.fetchFirst(request, credential);
+				} catch (IOException e) {
+					LOG.error(e.getMessage());
+				}
 				return;
 			}
 
 			if(actionPayload.startsWith(CustomActionConfigEnum.FETCH_MORE.getName())){
-				fetchMoreHandler.fetchMore(actionPayload, credential);
+				try {
+					fetchMoreHandler.fetchMore(actionPayload, credential);
+				} catch (IOException e) {
+					LOG.error(e.getMessage());
+				}
 				return;
 			}
 			
