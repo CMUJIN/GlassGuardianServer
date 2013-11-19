@@ -1,41 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <datastore-indexes autoGenerate="true">
-    <datastore-index kind="NOTES" ancestor="false" source="manual">
-        <property name="LATITUDE" direction="asc"/>
-        <property name="LONGTITUDE" direction="asc"/>
-        <property name="USER_ID" direction="asc"/>
-        <property name="DATE" direction="desc"/>
+    <datastore-index kind="USER" ancestor="false" source="manual">
+        <property name="EMAIL" direction="asc"/>
     </datastore-index>
-    <datastore-index kind="NOTES" ancestor="false" source="manual">
-        <property name="LATITUDE" direction="asc"/>
-        <property name="LONGTITUDE" direction="asc"/>
-        <property name="DATE" direction="asc"/>
-    </datastore-index>
-    <datastore-index kind="NOTES" ancestor="false" source="manual">
-        <property name="LATITUDE" direction="asc"/>
-        <property name="LONGTITUDE" direction="asc"/>
-        <property name="DATE" direction="desc"/>
-    </datastore-index>
-    <datastore-index kind="NOTES" ancestor="false" source="manual">
-        <property name="ZIP_CODE" direction="asc"/>
-        <property name="DATE" direction="desc"/>
-    </datastore-index>
-    <datastore-index kind="NOTES_CACHE" ancestor="false" source="manual">
-        <property name="LATITUDE" direction="asc"/>
-        <property name="LONGTITUDE" direction="asc"/>
-        <property name="IDENTITY_KEY" direction="asc"/>
-        <property name="SEQUENCE_ID" direction="desc"/>
-        <property name="DATE" direction="desc"/>
-    </datastore-index>
-    <datastore-index kind="ZONE_RATE" ancestor="false" source="manual">
-        <property name="LATITUDE" direction="asc"/>
-        <property name="LONGTITUDE" direction="asc"/>
-        <property name="ADDRESS" direction="asc"/>
-        <property name="ZIP_CODE" direction="desc"/>
-    </datastore-index>
-    <datastore-index kind="RATE_RECORD" ancestor="false" source="manual">
-        <property name="LATITUDE" direction="asc"/>
-        <property name="LONGTITUDE" direction="asc"/>
-        <property name="USER_ID" direction="asc"/>
-    </datastore-index>
+    
 </datastore-indexes>

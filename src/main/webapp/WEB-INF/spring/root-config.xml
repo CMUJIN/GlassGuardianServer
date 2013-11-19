@@ -12,7 +12,7 @@
      http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 	<context:annotation-config />
     
-	<context:component-scan base-package="com.jinhs.fetch.transaction" />
+	<context:component-scan base-package="com.jinhs.safeguard.dao" />
     <import resource="restful-context.xml"/>
 	<import resource="servlet-context.xml"/>
     <bean
@@ -20,7 +20,7 @@
     
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceXmlLocation" value="/WEB-INF/classes/META-INF/persistence.xml" />
-        <property name="packagesToScan" value="com.jinhs.fetch.entity"/>
+        <property name="packagesToScan" value="com.jinhs.safeguard.entity"/>
         <property name="persistenceUnitName" value="datanucleus_pu" />
         <property name="loadTimeWeaver">
             <!-- <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" /> -->

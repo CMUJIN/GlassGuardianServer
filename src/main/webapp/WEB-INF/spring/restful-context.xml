@@ -11,11 +11,9 @@
      http://www.springframework.org/schema/mvc
      http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 	
-    <context:component-scan base-package="com.jinhs.fetch.bo" />
-    <context:component-scan base-package="com.jinhs.fetch.common" />
-    <context:component-scan base-package="com.jinhs.fetch.handler" />
-    <context:component-scan base-package="com.jinhs.fetch.mirror" />
-    <context:component-scan base-package="com.jinhs.fetch.resource.controller" />
+    <context:component-scan base-package="com.jinhs.safeguard.common" />
+    <context:component-scan base-package="com.jinhs.safeguard.handler" />
+    <context:component-scan base-package="com.jinhs.safeguard.resource" />
 	<mvc:annotation-driven>
 	    <mvc:message-converters>
 	        <bean id="jsonHttpMessageConverter"

@@ -6,10 +6,10 @@
 
     <persistence-unit name="datanucleus_pu">
         <provider>org.datanucleus.api.jpa.PersistenceProviderImpl</provider>
-         <class>com.jinhs.fetch.entity.NoteEntity</class>
-         <class>com.jinhs.fetch.entity.NoteCacheEntity</class>
-         <class>com.jinhs.fetch.entity.ZoneRateEntity</class>
-         <class>com.jinhs.fetch.entity.RateRecordEntity</class>
+         <class>com.jinhs.safeguard.entity.AlertConfigEntity</class>
+         <class>com.jinhs.safeguard.entity.GuardModeEntity</class>
+         <class>com.jinhs.safeguard.entity.TrackerEntity</class>
+         <class>com.jinhs.safeguard.entity.UserEntity</class>
         <properties>
             <property name="datanucleus.NontransactionalRead" value="true"/>
             <property name="datanucleus.NontransactionalWrite" value="true"/>
