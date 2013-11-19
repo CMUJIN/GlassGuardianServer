@@ -1,10 +1,8 @@
 package com.jinhs.fetch.transaction;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.persistence.EntityManager;
