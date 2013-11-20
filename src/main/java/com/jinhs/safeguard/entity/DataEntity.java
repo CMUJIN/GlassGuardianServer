@@ -10,10 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.google.appengine.api.datastore.Key;
-
-@Table(name="TRACKER")
+@Table(name="DATA")
 @Entity
-public class TrackerEntity {
+public class DataEntity {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Key key;
@@ -23,7 +22,7 @@ public class TrackerEntity {
 	
 	@Column(name="SNAPSHOT")
 	private byte[] snapshot;
-	
+
 	@Column(name="LATITUDE")
 	private double latitude;
 	
@@ -33,9 +32,9 @@ public class TrackerEntity {
 	@Column(name="DATE")
 	private Date date;
 	
-	@Column(name="GUARD_ID")
-	private String guardId;
-
+	@Column(name="AUDIO")
+	private byte[] audio;
+	
 	public Key getKey() {
 		return key;
 	}
@@ -84,11 +83,11 @@ public class TrackerEntity {
 		this.date = date;
 	}
 
-	public String getGuardId() {
-		return guardId;
+	public byte[] getAudio() {
+		return audio;
 	}
 
-	public void setGuardId(String guardId) {
-		this.guardId = guardId;
+	public void setAudio(byte[] audio) {
+		this.audio = audio;
 	}
 }

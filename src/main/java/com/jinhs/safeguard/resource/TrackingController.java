@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.google.gson.Gson;
-import com.jinhs.safeguard.common.TrackerBO;
-import com.jinhs.safeguard.handler.TrackerHandler;
+import com.jinhs.safeguard.common.DataBO;
+import com.jinhs.safeguard.handler.DataHandler;
 
 @RequestMapping("/tracking")
 @Controller
@@ -21,14 +21,14 @@ public class TrackingController {
 	private static final Logger LOG = Logger.getLogger(TrackingController.class.getSimpleName());
 	 
 	@Autowired
-	TrackerHandler trackerHandler;
+	DataHandler dataHandler;
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public void saveTracker(@RequestBody String payload, HttpServletResponse httpResponse) throws IOException {
 		httpResponse.getOutputStream().close();
 	
-		TrackerBO tracker = new Gson().fromJson(payload, TrackerBO.class);
-		trackerHandler.saveTracker(tracker);
+		DataBO tracker = new Gson().fromJson(payload, DataBO.class);
+		dataHandler.saveData(tracker);
 	}
 }
 

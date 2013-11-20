@@ -1,5 +1,7 @@
 package com.jinhs.safeguard.dao;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -14,12 +16,8 @@ import org.datanucleus.exceptions.ClassNotResolvedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jinhs.safeguard.common.AlertItem;
-import com.jinhs.safeguard.common.TrackerBO;
-import com.jinhs.safeguard.common.UserBO;
-import com.jinhs.safeguard.entity.AlertConfigEntity;
-import com.jinhs.safeguard.entity.TrackerEntity;
-import com.jinhs.safeguard.entity.UserEntity;
+import com.jinhs.safeguard.common.DataBO;
+import com.jinhs.safeguard.entity.DataEntity;
 
 @Service
 @Transactional
@@ -31,94 +29,53 @@ public class DBTransService {
 	@PersistenceContext
 	EntityManager em;
 	
-	public void insertTracker(TrackerBO tracker) throws PersistenceException {
-		TrackerEntity entity = populateTrackerEntity(tracker);
+	public void insertData(DataBO data) throws PersistenceException {
+		DataEntity entity = populateDataEntity(data);
 		em.persist(entity);
 		em.setFlushMode(FlushModeType.AUTO);
 		em.flush();
 	}
 	
-	@Transactional(readOnly = true)
-	public boolean isUserExisted(String email) throws PersistenceException{
-		List<UserEntity> result;
+	public List<DataBO> getData() throws PersistenceException {
+		List<DataEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from UserEntity c where c.email=:email");
-			query.setParameter("email", email);
-			query.setMaxResults(1);
+					"select c from DataEntity c order by c.date asc");
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
 			LOG.error("isRateBefore DB exception "+e.getMessage());
-			return false;
+			return Collections.EMPTY_LIST;
 		}
-		return !result.isEmpty();
+		
+		return populateDataBO(result);
 	}
 	
-	public void insertNewUser(UserBO userBo) throws PersistenceException {
-		UserEntity entity = populateUesrEntity(userBo);
-		em.persist(entity);
-		em.setFlushMode(FlushModeType.AUTO);
-		em.flush();
-	}
-	
-	public void insertNewAlertConfigInfo(String email, AlertItem item) throws PersistenceException {
-		AlertConfigEntity entity = populateAlertConfigEntity(email, item);
-		em.persist(entity);
-		em.setFlushMode(FlushModeType.AUTO);
-		em.flush();
-	}
-
-	public void updateOldUser(UserBO userBo) throws PersistenceException {
-		List<UserEntity> result = null;
-		try{
-			Query query = em.createQuery(
-					"select c from UserEntity c where c.email=:email");
-			query.setParameter("email", userBo.getEmail());
-			query.setMaxResults(1);
-			result = query.getResultList();
-		}catch(ClassNotResolvedException e){
-			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
-			return;
+	private List<DataBO> populateDataBO(List<DataEntity> result) {
+		if(result==null)
+			return Collections.EMPTY_LIST;
+		List<DataBO> list = new ArrayList<DataBO>();
+		for(DataEntity entity: result){
+			DataBO data = new DataBO();
+			data.setAudio(entity.getAudio());
+			data.setDate(entity.getDate());
+			data.setEmail(entity.getEmail());
+			data.setLatitude(entity.getLatitude());
+			data.setLongtitude(entity.getLongtitude());
+			data.setSnapshot(entity.getSnapshot());
+			list.add(data);
 		}
-		UserEntity userEntity = result.get(0);
-		userEntity.setLastUpdateDate(new Date());
-		if(userBo.getProfileImage()!=null)
-			userEntity.setProfileImage(userBo.getProfileImage());
-		if(userBo.getUserName()!=null)
-			userEntity.setUserName(userBo.getUserName());
-		em.persist(userEntity);
-		em.setFlushMode(FlushModeType.AUTO);
-		em.flush();
+			
+		return list;
 	}
 
-	
-	private AlertConfigEntity populateAlertConfigEntity(String email,
-			AlertItem item) {
-		AlertConfigEntity entity = new AlertConfigEntity();
-		entity.setEmail(email);
-		entity.setAlertType(item.getAlertType());
-		entity.setAlertInfo(item.getAlertInfo());
-		return entity;
-	}
-	
-	private UserEntity populateUesrEntity(UserBO userBo) {
-		UserEntity entity = new UserEntity();
-		entity.setEmail(userBo.getEmail());
-		entity.setLastUpdateDate(new Date());
-		entity.setProfileImage(userBo.getProfileImage());
-		entity.setUserName(userBo.getUserName());
-		return entity;
-	}
-
-	private TrackerEntity populateTrackerEntity(TrackerBO tracker) {
-		TrackerEntity entity = new TrackerEntity();
+	private DataEntity populateDataEntity(DataBO data) {
+		DataEntity entity = new DataEntity();
+		entity.setEmail(data.getEmail());
 		entity.setDate(new Date());
-		entity.setEmail(tracker.getEmail());
-		entity.setGuardId(tracker.getGuardId());
-		entity.setLatitude(tracker.getLatitude());
-		entity.setLongtitude(tracker.getLongtitude());
-		entity.setSnapshot(tracker.getSnapshot());
+		entity.setLatitude(data.getLatitude());
+		entity.setLongtitude(data.getLongtitude());
+		entity.setAudio(data.getAudio());
+		entity.setSnapshot(data.getSnapshot());
 		return entity;
 	}
-	
 }
