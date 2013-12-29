@@ -20,7 +20,7 @@
 		<spring.security.version>3.1.4.RELEASE</spring.security.version>
 		<datanucleus.jpa.version>3.1.1</datanucleus.jpa.version>
 		<!-- Define local gae home path, which used to call local sdk to deploy 
-			project need run mvn gae:unpack to download the source code of gae sdk-->
+			project need run mvn gae:unpack to download the source code of gae sdk -->
 		<gae.home>
 			${settings.localRepository}\com\google\appengine\appengine-java-sdk\${appengine.target.version}\appengine-java-sdk\appengine-java-sdk-${appengine.target.version}
 		</gae.home>
@@ -277,6 +277,14 @@
 			<artifactId>gson</artifactId>
 			<version>2.2.4</version>
 		</dependency>
+
+		<!-- Jmail -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

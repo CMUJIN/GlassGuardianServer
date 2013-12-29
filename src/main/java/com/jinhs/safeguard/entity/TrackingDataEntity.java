@@ -10,31 +10,34 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.google.appengine.api.datastore.Key;
-@Table(name="DATA")
+@Table(name="TRACKING_DATA")
 @Entity
-public class DataEntity {
+public class TrackingDataEntity {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Key key;
 	
-	@Column(name="EMAIL")
-	private String email;
+	@Column(name="USER_ID")
+	private String userId;
 	
-	@Column(name="SNAPSHOT")
-	private byte[] snapshot;
-
+	@Column(name="IMAGE")
+	private String image;
+	
+	@Column(name="AUDIO")
+	private String audio;
+	
+	@Column(name="ADDRESS")
+	private String address;
+	
 	@Column(name="LATITUDE")
 	private double latitude;
 	
 	@Column(name="LONGTITUDE")
 	private double longtitude;
 	
-	@Column(name="DATE")
-	private Date date;
-	
-	@Column(name="AUDIO")
-	private byte[] audio;
-	
+	@Column(name="CREATION_DATE")
+	private Date creationDate;
+
 	public Key getKey() {
 		return key;
 	}
@@ -43,20 +46,36 @@ public class DataEntity {
 		this.key = key;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
-	public byte[] getSnapshot() {
-		return snapshot;
+	public String getImage() {
+		return image;
 	}
 
-	public void setSnapshot(byte[] snapshot) {
-		this.snapshot = snapshot;
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public String getAudio() {
+		return audio;
+	}
+
+	public void setAudio(String audio) {
+		this.audio = audio;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	public double getLatitude() {
@@ -75,19 +94,11 @@ public class DataEntity {
 		this.longtitude = longtitude;
 	}
 
-	public Date getDate() {
-		return date;
+	public Date getCreationDate() {
+		return creationDate;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public byte[] getAudio() {
-		return audio;
-	}
-
-	public void setAudio(byte[] audio) {
-		this.audio = audio;
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
 	}
 }

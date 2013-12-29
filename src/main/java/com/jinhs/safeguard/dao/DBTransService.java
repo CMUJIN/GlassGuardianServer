@@ -16,31 +16,31 @@ import org.datanucleus.exceptions.ClassNotResolvedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.jinhs.safeguard.common.DataBO;
-import com.jinhs.safeguard.entity.DataEntity;
+import com.jinhs.safeguard.common.TrackingDataBO;
+import com.jinhs.safeguard.entity.TrackingDataEntity;
 
 @Service
 @Transactional
 public class DBTransService {
-	private static final int MAX_CHACE_DELETE_QUERY_THRESHOLD = 1000;
-
 	private static final Logger LOG = Logger.getLogger(DBTransService.class.getSimpleName());
 
 	@PersistenceContext
 	EntityManager em;
 	
-	public void insertData(DataBO data) throws PersistenceException {
-		DataEntity entity = populateDataEntity(data);
+	public void insertData(TrackingDataBO data) throws PersistenceException {
+		TrackingDataEntity entity = populateDataEntity(data);
 		em.persist(entity);
 		em.setFlushMode(FlushModeType.AUTO);
 		em.flush();
 	}
 	
-	public List<DataBO> getData() throws PersistenceException {
-		List<DataEntity> result;
+	@SuppressWarnings("unchecked")
+	public List<TrackingDataBO> getData(String userId) throws PersistenceException {
+		List<TrackingDataEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from DataEntity c order by c.date asc");
+					"select c from TrackingDataEntity c where c.userId = :userId order by c.creationDate asc");
+			query.setParameter(userId, "userId");
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
 			LOG.error("isRateBefore DB exception "+e.getMessage());
@@ -50,32 +50,34 @@ public class DBTransService {
 		return populateDataBO(result);
 	}
 	
-	private List<DataBO> populateDataBO(List<DataEntity> result) {
+	@SuppressWarnings("unchecked")
+	private List<TrackingDataBO> populateDataBO(List<TrackingDataEntity> result) {
 		if(result==null)
 			return Collections.EMPTY_LIST;
-		List<DataBO> list = new ArrayList<DataBO>();
-		for(DataEntity entity: result){
-			DataBO data = new DataBO();
-			data.setAudio(entity.getAudio());
-			data.setDate(entity.getDate());
-			data.setEmail(entity.getEmail());
+		List<TrackingDataBO> list = new ArrayList<TrackingDataBO>();
+		for(TrackingDataEntity entity: result){
+			TrackingDataBO data = new TrackingDataBO();
+			data.setImagePath(entity.getImage());
+			data.setAudioPath(entity.getAudio());
+			data.setEmail(entity.getUserId());
 			data.setLatitude(entity.getLatitude());
 			data.setLongtitude(entity.getLongtitude());
-			data.setSnapshot(entity.getSnapshot());
+			data.setCreationDate(entity.getCreationDate());
 			list.add(data);
 		}
 			
 		return list;
 	}
 
-	private DataEntity populateDataEntity(DataBO data) {
-		DataEntity entity = new DataEntity();
-		entity.setEmail(data.getEmail());
-		entity.setDate(new Date());
+	private TrackingDataEntity populateDataEntity(TrackingDataBO data) {
+		TrackingDataEntity entity = new TrackingDataEntity();
+		entity.setUserId(data.getEmail());
+		entity.setImage(data.getImagePath());
+		entity.setAudio(data.getAudioPath());
+		entity.setAddress(data.getAddress());
 		entity.setLatitude(data.getLatitude());
 		entity.setLongtitude(data.getLongtitude());
-		entity.setAudio(data.getAudio());
-		entity.setSnapshot(data.getSnapshot());
+		entity.setCreationDate(new Date());
 		return entity;
 	}
 }

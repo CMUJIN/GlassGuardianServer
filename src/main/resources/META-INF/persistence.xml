@@ -6,7 +6,9 @@
 
     <persistence-unit name="datanucleus_pu">
         <provider>org.datanucleus.api.jpa.PersistenceProviderImpl</provider>
-         <class>com.jinhs.safeguard.entity.DataEntity</class>
+         <class>com.jinhs.safeguard.entity.TrackingDataEntity</class>
+         <class>com.jinhs.safeguard.entity.NotificationEmailEntity</class>
+         <class>com.jinhs.safeguard.entity.UserAccountEntity</class>
         <properties>
             <property name="datanucleus.NontransactionalRead" value="true"/>
             <property name="datanucleus.NontransactionalWrite" value="true"/>

@@ -18,13 +18,16 @@
 	<mvc:resources mapping="/js/**" location="/js/"/>
 	<mvc:resources mapping="/fonts/**" location="/fonts/"/>
 	<mvc:resources mapping="/static/**" location="/static/"/>
+	
+	<!-- <bean name="/hello.htm" 
+	class="com.jinhs.safeguard.domain.controller.TestJspController" /> -->
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix">
-			<value>/WEB-INF/views/</value>
+			<value>/WEB-INF/jsp/</value>
 		</property>
 		<property name="suffix">
-			<value>.html</value>
+			<value>.jsp</value>
 		</property>
 	</bean>
 	
