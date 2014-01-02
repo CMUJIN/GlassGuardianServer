@@ -40,7 +40,7 @@ public class EmailHandler {
             msg.addRecipient(Message.RecipientType.TO,
                              new InternetAddress("huangshuaijin@gmail.com", "Mr. User"));
             msg.setSubject("Glassguard Alert! Your friend need your help!");
-            msg.setText(buildMessage(list));
+            msg.setText(buildMessage(list, userId));
             Transport.send(msg);
 
         } catch (AddressException e) {
@@ -50,14 +50,14 @@ public class EmailHandler {
         }
 	}
 
-	private String buildMessage(List<TrackingDataBO> list) {
+	private String buildMessage(List<TrackingDataBO> list, String userId) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("Google Glass had detected an abnormal shock and your friend maybe in danger.\n");
 		sb.append("Call (412) 231-3214 To ensure your friend is alright");
 		sb.append("Here is the tracking information of your friend which shows his/her last known locations and surrounding data\n");
-		sb.append("Complete tracking page of your friend:"+"http://jinhsglassguard.appspot.com/view/trackinginfo.html");
+		sb.append("Complete tracking page of your friend:"+"http://jinhsglassguard.appspot.com/view/trackinginfo"+"?userId="+userId);
 		sb.append("\n");
-		for(TrackingDataBO data: list){
+		/*for(TrackingDataBO data: list){
 			sb.append("Time:"+convertTimeZone(data.getCreationDate()));
 			sb.append("\n");
 			sb.append("image:"+data.getImagePath());
@@ -68,7 +68,7 @@ public class EmailHandler {
 			sb.append("\n");
 			sb.append("longtitude:"+"-121.9216");
 			sb.append("\n\n");
-		}
+		}*/
 		
 		return sb.toString();
 	}

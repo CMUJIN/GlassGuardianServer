@@ -35,12 +35,12 @@ public class DBTransService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<TrackingDataBO> getData(String userId) throws PersistenceException {
+	public List<TrackingDataBO> getData(String email) throws PersistenceException {
 		List<TrackingDataEntity> result;
 		try{
 			Query query = em.createQuery(
-					"select c from TrackingDataEntity c where c.userId = :userId order by c.creationDate asc");
-			query.setParameter(userId, "userId");
+					"select c from TrackingDataEntity c where c.userId=:userId order by c.creationDate asc");
+			query.setParameter("userId", email);
 			result = query.getResultList();
 		}catch(ClassNotResolvedException e){
 			LOG.error("isRateBefore DB exception "+e.getMessage());

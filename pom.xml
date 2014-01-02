@@ -11,8 +11,8 @@
 
 	<properties>
 		<appengine.app.version>1</appengine.app.version>
-		<appengine.target.version>1.7.7</appengine.target.version>
-		<appengine.runtime.version>1.7.7.1</appengine.runtime.version>
+		<appengine.target.version>1.8.8</appengine.target.version>
+		<appengine.runtime.version>1.8.8</appengine.runtime.version>
 		<gaePluginVersion>0.9.6</gaePluginVersion>
 		<gae.port>8080</gae.port>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,7 +22,7 @@
 		<!-- Define local gae home path, which used to call local sdk to deploy 
 			project need run mvn gae:unpack to download the source code of gae sdk -->
 		<gae.home>
-			${settings.localRepository}\com\google\appengine\appengine-java-sdk\${appengine.target.version}\appengine-java-sdk\appengine-java-sdk-${appengine.target.version}
+			${settings.localRepository}\com\google\appengine\appengine-java-sdk\${appengine.target.version}\appengine-java-sdk-${appengine.target.version}
 		</gae.home>
 	</properties>
 
