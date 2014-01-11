@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.jinhs.safeguard.common.TrackingDataBO;
+import com.jinhs.safeguard.entity.NotificationEmailEntity;
 import com.jinhs.safeguard.entity.TrackingDataEntity;
 
 @Service
@@ -32,6 +33,57 @@ public class DBTransService {
 		em.persist(entity);
 		em.setFlushMode(FlushModeType.AUTO);
 		em.flush();
+	}
+	
+	public boolean isEmailExisted(String userId, String email) {
+		try{
+			Query query = em.createQuery(
+					"select c from NotificationEmailEntity c where c.userId=:userId and c.email=:email");
+			query.setParameter("userId", userId);
+			query.setParameter("email", email);
+			List<NotificationEmailEntity> result = query.getResultList();
+			if(result!=null&&result.size()!=0)
+				return true;
+		}catch(ClassNotResolvedException e){
+			LOG.error("isRateBefore DB exception "+e.getMessage());
+		}
+		return false;
+	}
+	
+	public void insertAlertEmail(String userId, String email){
+		NotificationEmailEntity entity = new NotificationEmailEntity();
+		entity.setUserId(userId);
+		entity.setEmail(email);
+		em.persist(entity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+
+	public void deleteAlertEmail(String userId, String email) {
+		try{
+			Query query = em.createQuery(
+					"delete from NotificationEmailEntity c where c.userId=:userId and c.email=:email");
+			query.setParameter("userId", userId);
+			query.setParameter("email", email);
+			query.executeUpdate();
+		}catch(ClassNotResolvedException e){
+			LOG.error("isRateBefore DB exception "+e.getMessage());
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<String> getAlertEmail(String userId){
+		List<String> result;
+		try{
+			Query query = em.createQuery(
+					"select c.email from NotificationEmailEntity c where c.userId=:userId");
+			query.setParameter("userId", userId);
+			result = query.getResultList();
+		}catch(ClassNotResolvedException e){
+			LOG.error("isRateBefore DB exception "+e.getMessage());
+			return Collections.EMPTY_LIST;
+		}
+		return result;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -80,4 +132,5 @@ public class DBTransService {
 		entity.setCreationDate(new Date());
 		return entity;
 	}
+
 }

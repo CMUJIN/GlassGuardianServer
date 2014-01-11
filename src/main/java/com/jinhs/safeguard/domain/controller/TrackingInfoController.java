@@ -23,7 +23,7 @@ public class TrackingInfoController{
 		List<TrackingDataBO> dataList = dataHandler.getData(userId);
 		ModelAndView model = new ModelAndView("trackinginfo");
 		model.addObject("trackDataList", dataList);
-		
+		model.addObject("email", userId);
 		return model;
 	}
 	

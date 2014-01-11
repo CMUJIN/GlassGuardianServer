@@ -29,6 +29,7 @@ public class TrackingController {
 		LOG.info("tracking uploading data");
 		TrackingDataBO tracker = new Gson().fromJson(payload, TrackingDataBO.class);
 		dataHandler.saveData(tracker);
+		
 	}
 }
 

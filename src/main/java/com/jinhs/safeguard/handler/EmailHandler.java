@@ -57,18 +57,6 @@ public class EmailHandler {
 		sb.append("Here is the tracking information of your friend which shows his/her last known locations and surrounding data\n");
 		sb.append("Complete tracking page of your friend:"+"http://jinhsglassguard.appspot.com/view/trackinginfo"+"?userId="+userId);
 		sb.append("\n");
-		/*for(TrackingDataBO data: list){
-			sb.append("Time:"+convertTimeZone(data.getCreationDate()));
-			sb.append("\n");
-			sb.append("image:"+data.getImagePath());
-			sb.append("\n");
-			sb.append("Address: 2161 N 1st St, San Jose, CA");
-			sb.append("\n");
-			sb.append("latitude:"+"37.3767");
-			sb.append("\n");
-			sb.append("longtitude:"+"-121.9216");
-			sb.append("\n\n");
-		}*/
 		
 		return sb.toString();
 	}

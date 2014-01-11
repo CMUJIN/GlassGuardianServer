@@ -8,7 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.google.appengine.api.datastore.Key;
-@Table(name="TRACKING_DATA")
+@Table(name="NOTIFICATION_EMAIL")
 @Entity
 public class NotificationEmailEntity {
 	@Id
