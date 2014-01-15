@@ -13,7 +13,7 @@ public class ConfigureHandler {
 	DBTransService dbTransService;
 	
 	public void insertAlertEmail(String userId, String email){
-		if(!dbTransService.isEmailExisted(userId, email))
+		if(!dbTransService.isNotificationEmailExisted(userId, email))
 			dbTransService.insertAlertEmail(userId, email);
 	}
 	

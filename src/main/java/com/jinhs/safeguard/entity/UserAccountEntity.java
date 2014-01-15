@@ -1,5 +1,7 @@
 package com.jinhs.safeguard.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,12 +22,18 @@ public class UserAccountEntity {
 	
 	@Column(name="ACCESS_TOKEN")
 	private String accessToken;
+	
+	@Column(name="REFRESH_TOKEN")
+	private String refreshToken;
 
 	@Column(name="EXPIRATION_TIME")
 	private double expirationTime;
 	
-	@Column(name="CREATION_DATE",updatable=false, insertable=false)
-	private double creationDate;
+	@Column(name="CREATION_DATE")
+	private Date creationDate;
+	
+	@Column(name="LAST_MODIFIED_DATE")
+	private Date lastModifiedDate;
 
 	public Key getKey() {
 		return key;
@@ -59,12 +67,28 @@ public class UserAccountEntity {
 		this.expirationTime = expirationTime;
 	}
 
-	public double getCreationDate() {
+	public Date getCreationDate() {
 		return creationDate;
 	}
 
-	public void setCreationDate(double creationDate) {
+	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
+	}
+
+	public Date getLastModifiedDate() {
+		return lastModifiedDate;
+	}
+
+	public void setLastModifiedDate(Date lastModifiedDate) {
+		this.lastModifiedDate = lastModifiedDate;
+	}
+
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 	
 	

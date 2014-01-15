@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.stereotype.Component;
 
-import com.jinhs.safeguard.common.TrackingDataBO;
+import com.jinhs.safeguard.dao.DBTransService;
 
 @Component
 public class EmailHandler {
@@ -29,18 +29,25 @@ public class EmailHandler {
 	@Autowired
 	private DataHandler dataHandler;
 	
+	@Autowired
+	private DBTransService transService;
+	
 	public void sendEmailGAE(String userId) throws UnsupportedEncodingException{
-		List<TrackingDataBO> list = dataHandler.getData(userId);
 		Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
+        List<String> emailList = transService.getAlertEmail(userId);
+        for(String toEmail: emailList)
+        	sendEmail(userId, toEmail, session);
+	}
 
-        try {
+	private void sendEmail(String userId, String toEmail, Session session) throws UnsupportedEncodingException {
+		try {
             Message msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress("jin231489@gmail.com", "GlassGuard"));
+            msg.setFrom(new InternetAddress("jin231489@gmail.com", "Glass Guardian"));
             msg.addRecipient(Message.RecipientType.TO,
-                             new InternetAddress("huangshuaijin@gmail.com", "Mr. User"));
-            msg.setSubject("Glassguard Alert! Your friend need your help!");
-            msg.setText(buildMessage(list, userId));
+                             new InternetAddress(toEmail, "Dear User"));
+            msg.setSubject("Glass Guardian Alert! Your friend need your help!");
+            msg.setText(buildMessage(userId));
             Transport.send(msg);
 
         } catch (AddressException e) {
@@ -50,7 +57,7 @@ public class EmailHandler {
         }
 	}
 
-	private String buildMessage(List<TrackingDataBO> list, String userId) {
+	private String buildMessage(String userId) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("Google Glass had detected an abnormal shock and your friend maybe in danger.\n");
 		sb.append("Call (412) 231-3214 To ensure your friend is alright");

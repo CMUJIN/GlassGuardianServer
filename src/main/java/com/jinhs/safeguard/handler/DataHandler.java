@@ -26,12 +26,12 @@ public class DataHandler {
 	MediaS3StorageHandler mediaStoreHandler;
 	
 	public void saveData(TrackingDataBO	data){
-		/*String url = storeImageFile(data);
-		data.setImagePath(url);*/
-		String imageUrl = mediaStoreHandler.storeImage(data);
+		String url = storeImageFile(data);
+		data.setImagePath(url);
+		/*String imageUrl = mediaStoreHandler.storeImage(data);
 		String audioUrl = mediaStoreHandler.storeAudio(data);
 		data.setImagePath(imageUrl);
-		data.setAudioPath(audioUrl);
+		data.setAudioPath(audioUrl);*/
 		dbTransService.insertData(data);
 	}
 

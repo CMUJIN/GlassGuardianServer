@@ -16,9 +16,11 @@ import org.datanucleus.exceptions.ClassNotResolvedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jinhs.safeguard.common.AuthExchangeResponse;
 import com.jinhs.safeguard.common.TrackingDataBO;
 import com.jinhs.safeguard.entity.NotificationEmailEntity;
 import com.jinhs.safeguard.entity.TrackingDataEntity;
+import com.jinhs.safeguard.entity.UserAccountEntity;
 
 @Service
 @Transactional
@@ -28,6 +30,56 @@ public class DBTransService {
 	@PersistenceContext
 	EntityManager em;
 	
+	public boolean isUserAccountExisted(String email) {
+		try{
+			Query query = em.createQuery(
+					"select c from UserAccountEntity c where c.userId=:userId");
+			query.setParameter("userId", email);
+			List<UserAccountEntity> result = query.getResultList();
+			if(result!=null&&result.size()!=0)
+				return true;
+		}catch(ClassNotResolvedException e){
+			LOG.error("isRateBefore DB exception "+e.getMessage());
+		}
+		return false;
+	}
+	 
+	public void insertNewUser(AuthExchangeResponse exchangeResponse, String email) throws PersistenceException {
+		UserAccountEntity entity = new UserAccountEntity();
+		entity.setUserId(email);
+		entity.setAccessToken(exchangeResponse.getAccess_token());
+		entity.setRefreshToken(exchangeResponse.getRefresh_token());
+		entity.setExpirationTime(exchangeResponse.getExpires_in());
+		Date creationDate = new Date();
+		entity.setCreationDate(creationDate);
+		entity.setLastModifiedDate(creationDate);
+		em.persist(entity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+	
+	public void updateUser(AuthExchangeResponse exchangeResponse, String email) throws PersistenceException {
+		UserAccountEntity entity = null;
+		try{
+			Query query = em.createQuery(
+					"select c from UserAccountEntity c where c.userId=:userId");
+			query.setParameter("userId", email);
+			entity = (UserAccountEntity) query.getSingleResult();
+		}catch(ClassNotResolvedException e){
+			LOG.error("fetchNotesByCoordinate DB exception "+e.getMessage());
+			return;
+		}
+		if(entity==null)
+			return;
+		entity.setAccessToken(exchangeResponse.getAccess_token());
+		entity.setRefreshToken(exchangeResponse.getRefresh_token());
+		entity.setExpirationTime(exchangeResponse.getExpires_in());
+		entity.setLastModifiedDate(new Date());
+		em.persist(entity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
+	}
+	
 	public void insertData(TrackingDataBO data) throws PersistenceException {
 		TrackingDataEntity entity = populateDataEntity(data);
 		em.persist(entity);
@@ -35,7 +87,7 @@ public class DBTransService {
 		em.flush();
 	}
 	
-	public boolean isEmailExisted(String userId, String email) {
+	public boolean isNotificationEmailExisted(String userId, String email) {
 		try{
 			Query query = em.createQuery(
 					"select c from NotificationEmailEntity c where c.userId=:userId and c.email=:email");
