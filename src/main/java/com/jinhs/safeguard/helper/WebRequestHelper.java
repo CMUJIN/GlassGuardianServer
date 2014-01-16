@@ -11,10 +11,12 @@ public class WebRequestHelper {
 	    StringBuffer url = new StringBuffer();
 	    url.append(WebURLConfig.GOOGLE_AUTH_URL);
 	    url.append("?client_id=");
-	    url.append(getClientId());
+	    url.append(PropertiesFileReader.getClientId());
 	    url.append("&scope=");
 	    url.append(WebURLConfig.GOOGLE_AUTH_SCOPE);
-	    url.append("&response_type=code&access_type=offline&approval_prompt=force&redirect_uri=");
+	    url.append("&state=");
+	    url.append(PropertiesFileReader.getStateToken());
+	    url.append("&response_type=code&access_type=online&redirect_uri=");
 	    url.append(WebURLConfig.AUTH_CALLBACK_URL);
 	    return url.toString();
 	}
@@ -23,9 +25,9 @@ public class WebRequestHelper {
 		StringBuffer url = new StringBuffer();
 		url.append(WebURLConfig.AUTH_TOKEN_EXCHANGE_URL);
 		url.append("client_id=");
-		url.append(getClientId());
+		url.append(PropertiesFileReader.getClientId());
 		url.append("&client_secret=");
-		url.append(getClientSecret());
+		url.append(PropertiesFileReader.getClientSecret());
 		url.append("&grant_type=authorization_code&code=");
 		url.append(code);
 		url.append("&redirect_uri=");
@@ -36,9 +38,9 @@ public class WebRequestHelper {
 	public static String buildAuthTokenExchangeData(String code){
 		StringBuffer data = new StringBuffer();
 		data.append("client_id=");
-		data.append(getClientId());
+		data.append(PropertiesFileReader.getClientId());
 		data.append("&client_secret=");
-		data.append(getClientSecret());
+		data.append(PropertiesFileReader.getClientSecret());
 		data.append("&grant_type=authorization_code&code=");
 		data.append(code);
 		data.append("&redirect_uri=");
@@ -46,24 +48,7 @@ public class WebRequestHelper {
 		return data.toString();
 	}
 	
-	private static String getClientId(){
-		return loadAuthPropertiesFile().getProperty("client_id");
-		//return loadAuthPropertiesFile().getProperty("client_id_local");
-	}
 	
-	private static String getClientSecret(){
-		return loadAuthPropertiesFile().getProperty("client_secret");
-		//return loadAuthPropertiesFile().getProperty("client_secret_local");
-	}
 	
-	private static Properties loadAuthPropertiesFile(){
-		Properties authProperties = new Properties();;
-		try {
-			authProperties.load(new FileInputStream("oauth.properties"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return authProperties;
-	}
+	
 }

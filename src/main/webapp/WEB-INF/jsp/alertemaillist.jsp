@@ -49,6 +49,11 @@ table {
 		</tr>
 		<tr>
 			<td align="center" valign="middle">
+				<p>Your gmail: ${userId}</p>
+			</td>
+		</tr>
+		<tr>
+			<td align="center" valign="middle">
 				<p>Alert Notification Email List</p>
 			</td>
 		</tr>

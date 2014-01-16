@@ -54,10 +54,9 @@ table {
 		</tr>
 		<tr>
 			<td align="center" valign="middle">
-				<p>Enter your gmail</p>
-				<form action="/view/emailConfigure/signIn" method="post">
-					<input type="text" name="userId" id="userId"/>
-					<input type="submit"/> 
+				<p>Sign In With Gmail</p>
+				<form action="/view/auth/login" method="get">
+					<input type="submit" value="Sign In"/> 
 				</form>
 			</td>
 		</tr>

@@ -1,13 +1,13 @@
 package com.jinhs.safeguard.common;
 
 public class EmailInfoResponse {
-	private String email;
+	private EmailData data;
 
-	public String getEmail() {
-		return email;
+	public EmailData getData() {
+		return data;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setData(EmailData data) {
+		this.data = data;
 	}
 }

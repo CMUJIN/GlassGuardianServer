@@ -20,6 +20,7 @@ public class TrackingInfoController{
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showTrackingPage(@RequestParam("userId") String userId){
+		
 		List<TrackingDataBO> dataList = dataHandler.getData(userId);
 		ModelAndView model = new ModelAndView("trackinginfo");
 		model.addObject("trackDataList", dataList);
