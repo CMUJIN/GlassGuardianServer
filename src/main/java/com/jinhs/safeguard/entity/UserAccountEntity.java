@@ -2,12 +2,14 @@ package com.jinhs.safeguard.entity;
 
 import java.util.Date;
 
+import javax.jdo.annotations.Unique;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.google.appengine.api.datastore.Key;
 @Table(name="USER_ACCOUNT")
@@ -18,8 +20,11 @@ public class UserAccountEntity {
     private Key key;
 	
 	@Column(name="USER_ID")
+	@Unique
+	@NotNull
 	private String userId;
 	
+	@NotNull
 	@Column(name="ACCESS_TOKEN")
 	private String accessToken;
 	

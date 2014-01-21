@@ -9,6 +9,7 @@
          <class>com.jinhs.safeguard.entity.TrackingDataEntity</class>
          <class>com.jinhs.safeguard.entity.NotificationEmailEntity</class>
          <class>com.jinhs.safeguard.entity.UserAccountEntity</class>
+         <class>com.jinhs.safeguard.entity.TrackingLinkSequenceEntity</class>
         <properties>
             <property name="datanucleus.NontransactionalRead" value="true"/>
             <property name="datanucleus.NontransactionalWrite" value="true"/>

@@ -56,13 +56,13 @@ public class AuthController {
 		AuthExchangeResponse exchangeResponse = new Gson().fromJson(new String(
 				response.getContent()), AuthExchangeResponse.class);
 		if (!isValidResponse(exchangeResponse))
-			return new ModelAndView("signin");
+			return new ModelAndView("redirect:login");
 
 		String email = getEmailRequest(exchangeResponse);
 		if (email == null)
 			return new ModelAndView("signin");
 
-		accountHander.signIn(exchangeResponse, email);
+		accountHander.signIn(exchangeResponse, email, code);
 		List<String> emailList = configureHandler.getAlertEmailList(email);
 		ModelAndView model = new ModelAndView("alertemaillist");
 		model.addObject("emailList", emailList);

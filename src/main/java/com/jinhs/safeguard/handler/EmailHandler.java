@@ -15,6 +15,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.mortbay.log.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSender;
 import org.springframework.stereotype.Component;
@@ -32,22 +33,22 @@ public class EmailHandler {
 	@Autowired
 	private DBTransService transService;
 	
-	public void sendEmailGAE(String userId) throws UnsupportedEncodingException{
+	public void sendEmailGAE(String userId, String key) throws UnsupportedEncodingException{
 		Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
         List<String> emailList = transService.getAlertEmail(userId);
         for(String toEmail: emailList)
-        	sendEmail(userId, toEmail, session);
+        	sendEmail(key, toEmail, session);
 	}
 
-	private void sendEmail(String userId, String toEmail, Session session) throws UnsupportedEncodingException {
+	private void sendEmail(String key, String toEmail, Session session) throws UnsupportedEncodingException {
 		try {
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress("jin231489@gmail.com", "Glass Guardian"));
             msg.addRecipient(Message.RecipientType.TO,
-                             new InternetAddress(toEmail, "Dear User"));
-            msg.setSubject("Glass Guardian Alert! Your friend need your help!");
-            msg.setText(buildMessage(userId));
+                             new InternetAddress(toEmail, "Mr. User"));
+            msg.setSubject("Glassguard Alert! Your friend need your help!");
+            msg.setText(buildMessage(key));
             Transport.send(msg);
 
         } catch (AddressException e) {
@@ -57,12 +58,12 @@ public class EmailHandler {
         }
 	}
 
-	private String buildMessage(String userId) {
+	private String buildMessage(String key) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("Google Glass had detected an abnormal shock and your friend maybe in danger.\n");
-		sb.append("Call (412) 231-3214 To ensure your friend is alright");
-		sb.append("Here is the tracking information of your friend which shows his/her last known locations and surrounding data\n");
-		sb.append("Complete tracking page of your friend:"+"http://jinhsglassguard.appspot.com/view/trackinginfo"+"?userId="+userId);
+		sb.append("\n");
+		sb.append("Click below link to see his/her latest environment information\n");
+		sb.append("http://jinhsglassguard.appspot.com/view/trackinginfo"+"?userId="+key);
 		sb.append("\n");
 		
 		return sb.toString();

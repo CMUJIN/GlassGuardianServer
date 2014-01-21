@@ -19,8 +19,13 @@ public class TrackingInfoController{
 	DataHandler dataHandler;
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showTrackingPage(@RequestParam("userId") String userId){
-		
+	public ModelAndView showTrackingPage(@RequestParam("userId") String key){
+		String userId = dataHandler.getTrackingUserId(key);
+		if(userId==null){
+			ModelAndView model = new ModelAndView("invalidtracking");
+			return model;
+		}
+			
 		List<TrackingDataBO> dataList = dataHandler.getData(userId);
 		ModelAndView model = new ModelAndView("trackinginfo");
 		model.addObject("trackDataList", dataList);

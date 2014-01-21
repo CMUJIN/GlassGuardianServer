@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.jinhs.safeguard.handler.DataHandler;
 import com.jinhs.safeguard.handler.EmailHandler;
 
 @RequestMapping("/alert")
@@ -20,11 +21,14 @@ public class AlertController {
 	@Autowired
 	EmailHandler emailHandler;
 	
+	@Autowired
+	DataHandler dataHandler;
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public void sendAlert(@RequestParam("userId") String userId, HttpServletResponse httpResponse) throws IOException {
 		httpResponse.getOutputStream().close();
-		
-		LOG.info("user id:"+userId);
-		emailHandler.sendEmailGAE(userId);
+		String key = dataHandler.generateAlertLink(userId);
+		LOG.info("user id:"+userId+" key:"+key);
+		emailHandler.sendEmailGAE(userId, key);
 	}
 }

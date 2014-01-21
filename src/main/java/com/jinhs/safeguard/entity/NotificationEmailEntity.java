@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.google.appengine.api.datastore.Key;
 @Table(name="NOTIFICATION_EMAIL")
@@ -15,9 +16,11 @@ public class NotificationEmailEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Key key;
 	
+	@NotNull
 	@Column(name="USER_ID")
 	private String userId;
 	
+	@NotNull
 	@Column(name="EMAIL")
 	private String email;
 

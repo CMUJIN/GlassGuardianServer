@@ -14,14 +14,8 @@ public class UserAccountHandler {
 	@Autowired
 	private DBTransService transService;
 	
-	public void signIn(AuthExchangeResponse exchangeResponse, String email){
-		if(transService.isUserAccountExisted(email)){
-			LOG.info("UserAccountHandler user info update");
-			transService.updateUser(exchangeResponse, email);
-		}
-		else{
-			LOG.info("UserAccountHandler new user info");
-			transService.insertNewUser(exchangeResponse, email);
-		}
+	public void signIn(AuthExchangeResponse exchangeResponse, String email, String code){
+		LOG.info("UserAccountHandler user info upsert");
+		transService.upsertUser(exchangeResponse, email);
 	}
 }
