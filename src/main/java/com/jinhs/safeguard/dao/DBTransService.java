@@ -50,26 +50,16 @@ public class DBTransService {
 			return null;
 	}
 	
-	public void cleanTrackingLinkData(TrackingLinkSequenceEntity deleteEntity)throws PersistenceException {
-		em.remove(deleteEntity);
-		em.setFlushMode(FlushModeType.AUTO);
-		em.flush();
-	}
-	
-	public List<TrackingLinkSequenceEntity> getOldTrackingLinkData(Date startDate)
+	public void deleteOldTrackingLinkData(Date startDate)
 			throws PersistenceException {
-		List<TrackingLinkSequenceEntity> result;
 		try {
 			Query query = em
-					.createQuery("select c from TrackingLinkSequenceEntity c where c.creationDate<:startDate");
+					.createQuery("delete from TrackingLinkSequenceEntity c where c.creationDate<:startDate");
 			query.setParameter("startDate", startDate);
-			result = query.getResultList();
+			query.executeUpdate();
 		} catch (ClassNotResolvedException e) {
 			LOG.error("isRateBefore DB exception " + e.getMessage());
-			return Collections.EMPTY_LIST;
 		}
-
-		return result;
 	}
 	
 	public String createTrackingLinkSequence(String userId){
@@ -137,27 +127,15 @@ public class DBTransService {
 		em.flush();
 	}
 
-	public List<TrackingDataEntity> getOldData(Date startDate)
-			throws PersistenceException {
-		List<TrackingDataEntity> result;
+	public void deleteOldData(Date startDate) throws PersistenceException {
 		try {
 			Query query = em
-					.createQuery("select c from TrackingDataEntity c where c.creationDate<:startDate");
+					.createQuery("delete c from TrackingDataEntity c where c.creationDate<:startDate");
 			query.setParameter("startDate", startDate);
-			result = query.getResultList();
+			query.executeUpdate();
 		} catch (ClassNotResolvedException e) {
 			LOG.error("isRateBefore DB exception " + e.getMessage());
-			return Collections.EMPTY_LIST;
 		}
-
-		return result;
-	}
-
-	public void cleanData(TrackingDataEntity deleteEntity)
-			throws PersistenceException {
-		em.remove(deleteEntity);
-		em.setFlushMode(FlushModeType.AUTO);
-		em.flush();
 	}
 
 	public boolean isNotificationEmailExisted(String userId, String email) {
