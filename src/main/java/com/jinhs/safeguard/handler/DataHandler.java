@@ -12,6 +12,8 @@ import com.google.appengine.api.images.ImagesService;
 import com.google.appengine.api.images.ImagesServiceFactory;
 import com.jinhs.safeguard.common.TrackingDataBO;
 import com.jinhs.safeguard.dao.DBTransService;
+import com.jinhs.safeguard.entity.TrackingDataEntity;
+import com.jinhs.safeguard.entity.TrackingLinkSequenceEntity;
 
 @Component
 public class DataHandler {
@@ -42,14 +44,20 @@ public class DataHandler {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, -2);
 		Date startDate = cal.getTime();
-		dbTransService.deleteOldData(startDate);
+		List<TrackingDataEntity> deleteList = dbTransService.getOldData(startDate);
+		for(TrackingDataEntity deleteData: deleteList){
+			dbTransService.deleteOldData(deleteData);
+		}
 	}
 	
 	public void cleanTrackingLinkData(){
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, -2);
 		Date startDate = cal.getTime();
-		dbTransService.deleteOldTrackingLinkData(startDate);
+		List<TrackingLinkSequenceEntity> deleteList = dbTransService.getOldTrackingLinkData(startDate);
+		for(TrackingLinkSequenceEntity deleteLink: deleteList){
+			dbTransService.deleteOldTrackingLinkData(deleteLink);;
+		}
 	}
 	
 	public String generateAlertLink(String userId){

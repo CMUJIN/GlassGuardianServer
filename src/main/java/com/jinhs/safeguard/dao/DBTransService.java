@@ -50,16 +50,23 @@ public class DBTransService {
 			return null;
 	}
 	
-	public void deleteOldTrackingLinkData(Date startDate)
-			throws PersistenceException {
-		try {
+	public List<TrackingLinkSequenceEntity> getOldTrackingLinkData(Date startDate){
+		try{
 			Query query = em
-					.createQuery("delete from TrackingLinkSequenceEntity c where c.creationDate<:startDate");
+					.createQuery("select c from TrackingLinkSequenceEntity c where c.creationDate<:startDate");
 			query.setParameter("startDate", startDate);
-			query.executeUpdate();
-		} catch (ClassNotResolvedException e) {
-			LOG.error("isRateBefore DB exception " + e.getMessage());
+			return query.getResultList();
+		} catch (NoResultException e) {
+			return Collections.EMPTY_LIST;
 		}
+	}
+	
+	public void deleteOldTrackingLinkData(TrackingLinkSequenceEntity oldLink)
+			throws PersistenceException {
+		TrackingLinkSequenceEntity deleteEntity = em.find(TrackingLinkSequenceEntity.class, oldLink.getKey());
+		em.remove(deleteEntity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
 	}
 	
 	public String createTrackingLinkSequence(String userId){
@@ -126,16 +133,23 @@ public class DBTransService {
 		em.setFlushMode(FlushModeType.AUTO);
 		em.flush();
 	}
-
-	public void deleteOldData(Date startDate) throws PersistenceException {
+	
+	public List<TrackingDataEntity> getOldData(Date startDate)throws PersistenceException {
 		try {
 			Query query = em
-					.createQuery("delete c from TrackingDataEntity c where c.creationDate<:startDate");
+					.createQuery("select c from TrackingDataEntity c where c.creationDate<:startDate");
 			query.setParameter("startDate", startDate);
-			query.executeUpdate();
-		} catch (ClassNotResolvedException e) {
-			LOG.error("isRateBefore DB exception " + e.getMessage());
+			return query.getResultList();
+		} catch (NoResultException e) {
+			return Collections.EMPTY_LIST;
 		}
+	}
+
+	public void deleteOldData(TrackingDataEntity oldData) throws PersistenceException {
+		TrackingDataEntity deleteEntity = em.find(TrackingDataEntity.class, oldData.getKey());
+		em.remove(deleteEntity);
+		em.setFlushMode(FlushModeType.AUTO);
+		em.flush();
 	}
 
 	public boolean isNotificationEmailExisted(String userId, String email) {
