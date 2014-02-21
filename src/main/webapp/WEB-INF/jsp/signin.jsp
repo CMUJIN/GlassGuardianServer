@@ -24,7 +24,7 @@
 	<div class="container">
 		<div class="row-fluid">
 			<div class="span12 coming-soon-header">
-				<a class="brand" href="index.html"> <img src="/assets/img/logo-big.png" alt="logo" />
+				<a class="brand" href="/index.html"> <img src="/assets/img/logo-big.png" alt="logo" />
 				</a>
 			</div>
 		</div>
