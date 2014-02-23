@@ -44,10 +44,10 @@ public class EmailHandler {
 	private void sendEmail(String key, String toEmail, Session session) throws UnsupportedEncodingException {
 		try {
             Message msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress("jin231489@gmail.com", "Glass Guardian"));
+            msg.setFrom(new InternetAddress("glassguardianalert@gmail.com", "Glass Guardian"));
             msg.addRecipient(Message.RecipientType.TO,
                              new InternetAddress(toEmail, "Mr. User"));
-            msg.setSubject("Glassguard Alert! Your friend need your help!");
+            msg.setSubject("Glassguardian Alert! Your friend need your help!");
             msg.setText(buildMessage(key));
             Transport.send(msg);
 
